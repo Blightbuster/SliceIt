@@ -8,12 +8,21 @@ public class CenterGO : MonoBehaviour
 
     // Use this for initialization
     void Start()
-	{
-		Vector3 lowerRightScreen = new Vector3(Screen.width, 0, 0); //Screen coordinate corner location
-        lowerRight = Camera.main.ScreenToWorldPoint(lowerRightScreen);  //Corner locatios in world coordinates
+    {
+        // Screens coordinate corner location
+        Vector3 upperLeftScreen = new Vector3(0, Screen.height, 0);
+        Vector3 upperRightScreen = new Vector3(Screen.width, Screen.height, 0);
+        Vector3 lowerLeftScreen = new Vector3(0, 0, 0);
+        Vector3 lowerRightScreen = new Vector3(Screen.width, 0, 0);
+
+        //Corner locations in world coordinates
+        Vector3 upperLeft = Camera.main.ScreenToWorldPoint(upperLeftScreen);
+        Vector3 upperRight = Camera.main.ScreenToWorldPoint(upperRightScreen);
+        Vector3 lowerLeft = Camera.main.ScreenToWorldPoint(lowerLeftScreen);
+        lowerRight = Camera.main.ScreenToWorldPoint(lowerRightScreen);
 
         AlignDisplay();
-	}
+    }
 
     private void AlignDisplay()
     {

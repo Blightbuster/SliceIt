@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using cakeslice;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -912,10 +912,13 @@ public static class SpriteSlicer2D
 		polygonCollider = slicedSprite.GetComponent<PolygonCollider2D>();
         polygonCollider.SetPath(0, spriteVertices);
 		polygonCollider.sharedMaterial = physicsMaterial;
+
+        // Custom Components
+	    childObject.AddComponent<Outline>();
 	}
 
-	#region "HELPER_FUNCTIONS"
-	enum LineSide
+    #region "HELPER_FUNCTIONS"
+    enum LineSide
 	{
 		Left,
 		Right,

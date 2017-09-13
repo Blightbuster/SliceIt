@@ -1,5 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Text;
+using cakeslice;
+using UnityEditor;
 using UnityEngine;
 
 public class ObjectSlicer : MonoBehaviour
@@ -7,8 +11,8 @@ public class ObjectSlicer : MonoBehaviour
     private List<SpriteSlicer2DSliceInfo> _slicedSpriteInfo = new List<SpriteSlicer2DSliceInfo>();
     private LineRenderer _lineRenderer;
 
-    private Vector3 _startPos;
-    private Vector3 _endPos;
+    private Vector2 _startPos;
+    private Vector2 _endPos;
 
     // Start is called at initialization
     private void Start()
@@ -21,32 +25,42 @@ public class ObjectSlicer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _lineRenderer.enabled = true;
-            _startPos = Input.mousePosition;    // Set Starposition for slicingray
+            _startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);    // Set Starposition for slicingray + convert screen to world coordinates
         }
 
         if (Input.GetMouseButtonUp(0))
         {
             _lineRenderer.enabled = false;
+            Slice();
         }
 
         if (Input.GetMouseButton(0))
         {
-            _endPos = Input.mousePosition;
+            _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);  //Set Endposition for slicingray + convert screen to world coordinates
             DrawSlicingray();
         }
     }
 
     private void DrawSlicingray()
     {
-        float cutLenght = Vector3.Distance(_startPos, _endPos);
+        RaycastHit2D raycastHit2D = Physics2D.Linecast(_startPos, _endPos);
+        RaycastHit2D raycastHit2Dback = Physics2D.Linecast(_endPos, _startPos);
+        if (raycastHit2D.collider == null || raycastHit2Dback.collider == null) return;  // Return if no object was found
+        if (!raycastHit2D.transform.CompareTag("slice")) return;    // Return if object is not a slice
+        _lineRenderer.enabled = true;
+        _startPos = raycastHit2D.point;
 
-        Vector3[] linePositions = new Vector3[] { Camera.main.ScreenToWorldPoint(_startPos), Camera.main.ScreenToWorldPoint(_endPos)};
+        _lineRenderer.SetPositions(new Vector3[] { _startPos, raycastHit2Dback.point });
+    }
 
-        //Set z-axis of position to -5 else line would be on camera and not visible
-        linePositions[0].z = -5;
-        linePositions[1].z = -5;
+    private void Slice()
+    {
+        // Slicing the sprite requirs 2 vectors which are NOT on/over the sprite
+        // Thats why we calculate a offset for the start position
+        Vector2 elevatedStartPos = _startPos - _endPos;
+        elevatedStartPos.Normalize();
+        _startPos += elevatedStartPos;
 
-        _lineRenderer.SetPositions(linePositions);
+        SpriteSlicer2D.SliceAllSprites(_startPos, _endPos, false, ref _slicedSpriteInfo, "slice");
     }
 }
