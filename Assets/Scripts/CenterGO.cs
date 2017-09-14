@@ -4,32 +4,23 @@ using UnityEngine;
 
 public class CenterGO : MonoBehaviour
 {
-    private Vector3 lowerRight;
+    public Vector2 ViewportCorner;
 
     // Use this for initialization
     void Start()
     {
-        // Screens coordinate corner location
-        Vector3 upperLeftScreen = new Vector3(0, Screen.height, 0);
-        Vector3 upperRightScreen = new Vector3(Screen.width, Screen.height, 0);
-        Vector3 lowerLeftScreen = new Vector3(0, 0, 0);
-        Vector3 lowerRightScreen = new Vector3(Screen.width, 0, 0);
-
         //Corner locations in world coordinates
-        Vector3 upperLeft = Camera.main.ScreenToWorldPoint(upperLeftScreen);
-        Vector3 upperRight = Camera.main.ScreenToWorldPoint(upperRightScreen);
-        Vector3 lowerLeft = Camera.main.ScreenToWorldPoint(lowerLeftScreen);
-        lowerRight = Camera.main.ScreenToWorldPoint(lowerRightScreen);
+        Vector2 worldCorner = Camera.main.ViewportToWorldPoint(ViewportCorner);
 
-        AlignDisplay();
+        AlignDisplay(worldCorner);
     }
 
-    private void AlignDisplay()
+    private void AlignDisplay(Vector2 worldCorner)
     {
-        Vector3 parentPosition = transform.parent.position;
-        parentPosition -= GetComponentInParent<SpriteRenderer>().bounds.size;
-        parentPosition.y += GetComponentInParent<SpriteRenderer>().bounds.size.y * 2;
-        Vector3 parentCenter = (parentPosition + lowerRight) / 2;
+        Bounds bounds = transform.parent.GetComponent<SpriteRenderer>().bounds; // Get the boundingbox of the parents sprite
+        Vector2 parentTopLeft = bounds.min; // bounds.min is the lower-left corner of the sprite
+        parentTopLeft.y += bounds.size.y;   // Add the height of the sprite to the lower-left corner to get the upper-right corner
+        Vector2 parentCenter = (parentTopLeft + worldCorner) / 2;    // Calculate the middle betwen both vectors
         transform.position = parentCenter;
     }
 }
