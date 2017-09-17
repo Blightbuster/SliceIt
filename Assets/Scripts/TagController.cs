@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -26,7 +27,7 @@ public class TagController : MonoBehaviour
         {
             foreach (GameObject go in sliceInfo.ChildObjects)
             {
-                if(go.GetComponent<MeshRenderer>().bounds.center.x > scalLowerLeftCorner.x && !TagWeigh.Contains(go) && go.activeSelf) TagWeigh.Add(go);
+                if (go.activeSelf && go.GetComponent<MeshRenderer>().bounds.center.x > scalLowerLeftCorner.x && go.GetComponent<GroundChecker>().IsGrounded) TagWeigh.Add(go);
             }
         }
     }

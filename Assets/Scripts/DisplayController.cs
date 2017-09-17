@@ -8,15 +8,6 @@ public class DisplayController : MonoBehaviour
     public List<Sprite> NumberSprites;
     public List<GameObject> DiplayDigits;
 
-    void Update()
-    {
-        float totalWeigh = 0;
-
-        foreach (GameObject go in GameObject.Find("GameManager").GetComponent<TagController>().TagWeigh) totalWeigh += go.GetComponent<Rigidbody2D>().mass;
-
-        SetDisplayValue((int)totalWeigh);
-    }
-
     public void SetDisplayValue(int n)
     {
         String number = (string)IntToString(n);    // Convert given number to a string with (if nescessary) additional "0" infront

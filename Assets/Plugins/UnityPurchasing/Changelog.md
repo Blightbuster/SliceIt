@@ -1,3 +1,18 @@
+## [1.13.3] - 2017-09-14
+### Fixed
+- Fixed a bug that caused some iOS 11 promoted in-app purchase attempts to fail when the app was not already running in the background
+
+## [1.13.2] - 2017-09-07
+### Added
+- Android Gradle - Optional Proguard configuration file to support Gradle release builds on Unity 2017.1+: "Assets/Plugins/Android/proguard-user.txt.OPTIONAL.txt". See contents of file for more detail.
+- Installer - Compatibility with Unity 2017.2's Build Settings > Android > Xiaomi Mi Game Center SDK package add button, avoiding duplicate class definitions if previously added to `Packages/manifest.json` (new Package Manager).
+
+### Fixed
+- Windows (UWP) Store - Updates error handling for failed purchases to correctly call `OnPurchaseFailed()` with an informative `PurchaseFailureReason`
+- Fixed prices that were incorrectly parsed when the device's culture specified a number format using a comma for the decimal separator.
+- XiaomiMiPay - Limit product identifier length to 40 characters in IAP Catalog, matching store requirements.
+- Receipt Validation - Address aggressive class stripping NullReferenceException when validating receipt with preservation in Assets/Plugins/UnityPurchasing/scripts/link.xml.
+
 ## [1.13.1] - 2017-08-18
 ### Fixed
 - Android platforms - Fix Unity crash by stack-overflow when using the `UnityPurchasingEditor.TargetAndroidStore(AndroidStore store)` method or the Window > Unity IAP > Android > Xiaomi Mi Game Pay targeting menu.

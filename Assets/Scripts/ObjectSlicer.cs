@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using cakeslice;
-using UnityEditor;
 using UnityEngine;
 
 public class ObjectSlicer : MonoBehaviour
@@ -13,6 +12,7 @@ public class ObjectSlicer : MonoBehaviour
 
     private Vector2 _startPos;
     private Vector2 _endPos;
+    private bool _isSlicing = false;
 
     // Start is called at initialization
     private void Start()
@@ -25,16 +25,23 @@ public class ObjectSlicer : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            RaycastHit2D desiredObject = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (!(desiredObject.transform == null))
+            {
+                if (desiredObject.transform.CompareTag("Slice")) return;
+            }
             _startPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);    // Set Starposition for slicingray + convert screen to world coordinates
+            _isSlicing = true;
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && _isSlicing)
         {
             _lineRenderer.enabled = false;
             Slice();
+            _isSlicing = false;
         }
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && _isSlicing)
         {
             _endPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);  //Set Endposition for slicingray + convert screen to world coordinates
             DrawSlicingray();
@@ -45,6 +52,7 @@ public class ObjectSlicer : MonoBehaviour
     {
         RaycastHit2D raycastHit2D = Physics2D.Linecast(_startPos, _endPos);
         RaycastHit2D raycastHit2Dback = Physics2D.Linecast(_endPos, _startPos);
+
         if (raycastHit2D.collider == null || raycastHit2Dback.collider == null) return;  // Return if no object was found
         if (!raycastHit2D.transform.CompareTag("Slice")) return;    // Return if object is not a slice
         _lineRenderer.enabled = true;
