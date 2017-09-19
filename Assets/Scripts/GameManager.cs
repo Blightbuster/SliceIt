@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
             totalWeigh += go.GetComponent<Rigidbody2D>().mass;
             go.GetComponent<Outline>().color = 1; // Change outline-color of all slices on the scale
         }
-        Display.GetComponent<DisplayController>().SetDisplayValue((int)totalWeigh);
+        Display.GetComponent<DisplayController>().TargetNumber = totalWeigh;
 
         foreach (SpriteSlicer2DSliceInfo sliceInfo in GetComponent<ObjectSlicer>().SlicedSpriteInfo)
         {

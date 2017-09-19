@@ -8,9 +8,42 @@ public class DisplayController : MonoBehaviour
     public List<Sprite> NumberSprites;
     public List<GameObject> DiplayDigits;
 
-    public void SetDisplayValue(int n)
+    public float TargetNumber
     {
-        String number = (string)IntToString(n);    // Convert given number to a string with (if nescessary) additional "0" infront
+        get { return _targetNumber; }
+        set
+        {
+            if (Math.Abs(_targetNumber - value) > 0.5f)
+            {
+                _numberDifference = Mathf.Abs(value - _currentNumber);
+                _stepValue = (float)Time.fixedDeltaTime * _numberDifference / TransitionTime;
+            }
+            _targetNumber = value;
+        }
+    }
+
+    public float TransitionTime = 1.0f;
+
+    private float _targetNumber;
+    private float _currentNumber;
+    private float _numberDifference;
+    private float _stepValue;
+
+    void FixedUpdate()
+    {
+        if (Math.Abs(_currentNumber - _targetNumber) > 0.5f)
+        {
+            if (_currentNumber < _targetNumber) SetDisplayValue(_currentNumber + _stepValue);
+            else if (_currentNumber > _targetNumber) SetDisplayValue(_currentNumber - _stepValue);
+
+            if (_currentNumber < 0) _currentNumber = 0;
+        }
+    }
+
+    private void SetDisplayValue(float n)
+    {
+        _currentNumber = n;
+        string number = (string)IntToString((int)n);    // Convert given number to a string with (if nescessary) additional "0" infront
 
         if (number.Length != 5) return;    // Can the display even show the number?
 
@@ -23,7 +56,7 @@ public class DisplayController : MonoBehaviour
         }
     }
 
-    public static string Reverse(string s)
+    private static string Reverse(string s)
     {
         char[] charArray = s.ToCharArray();
         Array.Reverse(charArray);
