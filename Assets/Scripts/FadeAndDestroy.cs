@@ -1,55 +1,47 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-/// <summary>
-/// Helper component to fade a gameobject out and then 
-/// destroy it once invisible
-/// </summary>
+// Helper component to fade a gameobject out and then 
+// destroy it once invisible
 [RequireComponent(typeof(SlicedSprite))]
-public class FadeAndDestroy : MonoBehaviour 
+public class FadeAndDestroy : MonoBehaviour
 {
-	public float m_FadeDelay = 1.0f;
-	public float m_FadeTime = 1.0f;
-    public bool m_WaitUntilStationary = false;
-    public float m_StationaryVelocity = 0.2f;
+    private Color _initialColor;
+    private Material _material;
+    private Rigidbody2D _rigidBody;
 
-	SlicedSprite m_SlicedSprite;
-    Rigidbody2D m_RigidBody;
-    Material m_Material;
-    Color m_InitialColor;    
-	float m_Timer;    
-		
-    /// <summary>
-    /// Called on script construction
-    /// </summary>
-	void Awake()
-	{        
-		m_SlicedSprite = GetComponent<SlicedSprite>();
-        m_RigidBody = m_SlicedSprite.GetComponent<Rigidbody2D>();
-        m_Material = m_SlicedSprite.GetComponent<Renderer>().material;
-		m_InitialColor = m_Material.color;
-	}
-		
-    /// <summary>
-    /// Update this instance
-    /// </summary>
-	void Update () 
-	{
-        if (!m_WaitUntilStationary || m_RigidBody.velocity.sqrMagnitude < (m_StationaryVelocity * m_StationaryVelocity))
+    private SlicedSprite _slicedSprite;
+    private float _timer;
+    public float FadeDelay;
+    public float FadeTime = 1.0f;
+    public float StationaryVelocity = 0.2f;
+    public bool WaitUntilStationary;
+
+    // Called on script construction
+    private void Awake()
+    {
+        _slicedSprite = GetComponent<SlicedSprite>();
+        _rigidBody = _slicedSprite.GetComponent<Rigidbody2D>();
+        _material = _slicedSprite.GetComponent<Renderer>().material;
+        _initialColor = _material.color;
+        tag = "Destroy";
+    }
+
+    // Update this instance
+    private void Update()
+    {
+        if (!WaitUntilStationary || _rigidBody.velocity.sqrMagnitude < StationaryVelocity * StationaryVelocity)
         {
-            m_Timer += Time.deltaTime;
+            _timer += Time.deltaTime;
 
-            if (m_FadeTime > 0)
+            if (FadeTime > 0)
             {
-                Color newColor = m_InitialColor;
-                newColor.a = 1.0f - Mathf.Clamp01((m_Timer - m_FadeDelay) / m_FadeTime);
-                m_SlicedSprite.GetComponent<Renderer>().material.color = newColor;
+                var newColor = _initialColor;
+                newColor.a = 1.0f - Mathf.Clamp01((_timer - FadeDelay) / FadeTime);
+                _slicedSprite.GetComponent<Renderer>().material.color = newColor;
             }
 
-            if ((m_Timer - m_FadeDelay) >= m_FadeTime)
-            {
-                Destroy(this.gameObject);
-            }
-        }		
-	}
+            if (_timer - FadeDelay >= FadeTime)
+                Destroy(gameObject);
+        }
+    }
 }

@@ -1,11 +1,18 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using cakeslice;
+﻿using cakeslice;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject Display;
+
+    public GameType GameMode = GameType.Computer;
+
+    public enum GameType
+    {
+        Computer,
+        Bluetooth,
+        Wifi
+    }
 
     // Update is called once per frame
     void Update()
@@ -27,6 +34,17 @@ public class GameManager : MonoBehaviour
                 {
                     go.GetComponent<Outline>().color = 0;
                 }
+            }
+        }
+    }
+
+    public void FinishMove()
+    {
+        if (GameMode == GameType.Computer)
+        {
+            foreach (GameObject slice in GetComponent<TagController>().TagWeigh)
+            {
+                slice.AddComponent<FadeAndDestroy>();
             }
         }
     }
