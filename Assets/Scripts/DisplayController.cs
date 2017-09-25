@@ -28,6 +28,11 @@ public class DisplayController : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        TargetNumber = Manager.GameManager.GetComponent<GameManager>().GetWeightOnScale();
+    }
+
     private void FixedUpdate()
     {
         if (Math.Abs(_currentNumber - _targetNumber) > 0.5f)

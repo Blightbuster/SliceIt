@@ -917,6 +917,7 @@ public static class SpriteSlicer2D
 	    // Custom Components
 	    childObject.AddComponent<Outline>();
 	    childObject.AddComponent<GroundChecker>();
+	    childObject.AddComponent<SliceOutlineUpdater>();
     }
 
 	#region "HELPER_FUNCTIONS"
