@@ -6,14 +6,15 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public List<GameObject> SlicingObjects = new List<GameObject>();
-    public GameState State = GameState.StartGame;
+    public GameState State;
 
     public int PlayerScore;
     public int OpponentScore;
-    public int PointsForWin = 5;
+    public int PointsForWin;
 
     private static GameType _gameMode = GameType.Bot;
     private static float _lastTotalWeight;
+    private readonly Bot _botOpponent = new Bot();
 
     public enum GameState
     {
@@ -37,8 +38,21 @@ public class GameManager : MonoBehaviour
         Wifi
     }
 
+    // Testing only
+    private void Start()
+    {
+        StartGame(5, GameType.Bot);
+    }
+
+    public void StartGame(int iPointsForWin, GameType iGameMode)
+    {
+        PointsForWin = iPointsForWin;
+        _gameMode = iGameMode;
+        State = GameState.StartGame;
+    }
+
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         switch (State)
         {
@@ -76,7 +90,7 @@ public class GameManager : MonoBehaviour
             case GameState.WaitForOpponent:
                 if (_gameMode == GameType.Bot)
                 {
-                    State = _lastTotalWeight > Bot.GetNextMove() ? GameState.WonRound : GameState.LossRound;
+                    State = _lastTotalWeight > _botOpponent.GetNextMove() ? GameState.WonRound : GameState.LossRound;
                 }
                 break;
         }

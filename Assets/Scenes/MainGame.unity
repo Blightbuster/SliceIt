@@ -296,11 +296,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4897005113171868, guid: 79493107679460b4dbebb7f26ab814a5, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -43.1
+      value: -43.09
       objectReference: {fileID: 0}
     - target: {fileID: 4897005113171868, guid: 79493107679460b4dbebb7f26ab814a5, type: 2}
       propertyPath: m_LocalPosition.y
-      value: -67.7
+      value: -67.74
       objectReference: {fileID: 0}
     - target: {fileID: 4897005113171868, guid: 79493107679460b4dbebb7f26ab814a5, type: 2}
       propertyPath: m_LocalPosition.z
@@ -509,6 +509,33 @@ Transform:
   m_Father: {fileID: 1109399152}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &573345651
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_Width: 1920
+  m_Height: 1080
+  m_AntiAliasing: 1
+  m_DepthFormat: 1
+  m_ColorFormat: 0
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 0
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
 --- !u!1 &734110181
 GameObject:
   m_ObjectHideFlags: 0
@@ -551,7 +578,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 0
   m_RenderingPath: 1
-  m_TargetTexture: {fileID: 1097141902}
+  m_TargetTexture: {fileID: 573345651}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -830,33 +857,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bc5b9b92bb0c5749b15140521ae0b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!84 &980059197
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_Width: 1920
-  m_Height: 1080
-  m_AntiAliasing: 1
-  m_DepthFormat: 1
-  m_ColorFormat: 0
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
 --- !u!1 &1082109569
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,7 +999,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!84 &1097141902
+--- !u!84 &1099312401
 RenderTexture:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -1107,7 +1107,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1109399151}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -10, z: 0}
+  m_LocalPosition: {x: -4.1, y: 0.2, z: 0}
   m_LocalScale: {x: 0.38961446, y: 1, z: 1}
   m_Children:
   - {fileID: 572803483}
@@ -1209,6 +1209,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1127150157}
   - component: {fileID: 1127150156}
+  - component: {fileID: 1127150158}
   m_Layer: 2
   m_Name: Scale
   m_TagString: Untagged
@@ -1267,13 +1268,28 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1127150155}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 81.7, y: -45.1, z: 10}
+  m_LocalPosition: {x: 82.3, y: -45.34, z: 10}
   m_LocalScale: {x: 4.356927, y: 4.021779, z: 6.702965}
   m_Children:
   - {fileID: 1109399152}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1127150158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1127150155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!1 &1187194476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1526,7 +1542,7 @@ MonoBehaviour:
   lineColor2: {r: 0, g: 0, b: 0, a: 1}
   additiveRendering: 0
   backfaceCulling: 1
-  cornerOutlines: 0
+  cornerOutlines: 1
   addLinesBetweenColors: 0
   scaleWithScreenSize: 1
   alphaCutoff: 0.5
@@ -1534,8 +1550,8 @@ MonoBehaviour:
   sourceCamera: {fileID: 1343211702}
   outlineCamera: {fileID: 734110182}
   outlineShaderMaterial: {fileID: 0}
-  renderTexture: {fileID: 1097141902}
-  extraRenderTexture: {fileID: 980059197}
+  renderTexture: {fileID: 573345651}
+  extraRenderTexture: {fileID: 1099312401}
 --- !u!1 &1399907766
 GameObject:
   m_ObjectHideFlags: 0
@@ -1900,6 +1916,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1880479819}
   - component: {fileID: 1880479818}
+  - component: {fileID: 1880479817}
   m_Layer: 2
   m_Name: Board
   m_TagString: Untagged
@@ -1907,6 +1924,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1880479817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1880479816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbf3575480402db40813e763382412fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  eraseRenderer: 0
+  originalLayer: 0
+  originalMaterials: []
 --- !u!212 &1880479818
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1958,7 +1990,7 @@ Transform:
   m_PrefabInternal: {fileID: 378729378}
   m_GameObject: {fileID: 1880479816}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43.1, y: -67.7, z: 10}
+  m_LocalPosition: {x: -43.09, y: -67.74, z: 10}
   m_LocalScale: {x: 3.2753727, y: 4.8488426, z: 3.7355902}
   m_Children: []
   m_Father: {fileID: 0}

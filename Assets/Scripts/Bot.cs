@@ -1,60 +1,68 @@
 ﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
-public static class Bot
+public class Bot
 {
-    public static float TotalMass = 1000;
-    public static float TotalMassLeft = 1000;
-    public static int PointsForWin = 5;
-    public static float BluffChance = 0.3f;     // In %
-    public static float BluffIncrease = 0.2f;   // In %
-    public static float BluffMargin = 0.1f;     // In %
-    public static bool AllowBluff = true;
-    public static float MinBluffMassMargin = 0.1f;  // In %
-    public static float MaxBluffMassMargin = 0.3f;  // In %
-    public static float MinNoneBluffMassMultiplier = 0.3f;
-    public static float MaxNoneBluffMassMultiplier = 1.5f;
-    public static bool DebugMode = true;
+    public float TotalMass = 1000;
+    public float TotalMassLeft = 1000;
+    public int PointsForWin = 5;
+    public float BluffChance = 0.3f;     // In %
+    public float BluffIncrease = 0.2f;   // In %
+    public float BluffMargin = 0.1f;     // In %
+    public bool AllowBluff = true;
+    public float MinBluffMassMargin = 0.1f;  // In %
+    public float MaxBluffMassMargin = 0.3f;  // In %
+    public float MinNoneBluffMassMultiplier = 0.3f;
+    public float MaxNoneBluffMassMultiplier = 1.5f;
+    public int DebugMode = 1;
 
-    private static int _botScore;
-    private static int _playerScore;
-    private static int _roundIndex;
-    private static int _maxRounds = PointsForWin * 2 - 1;
-    private static float _averageMassPerRound = TotalMass / _maxRounds;
-    private static bool _bluffedLastRound = false;
-    private static float _currentBluffChance = BluffChance;
+    private int _botScore;
+    private int _playerScore;
+    private int _roundIndex;
+    private readonly int _maxRounds;
+    private readonly float _averageMassPerRound;
+    private readonly bool _bluffedLastRound;
+    private float _currentBluffChance;
 
-    public static float GetNextMove()
+    public Bot()
+    {
+        _maxRounds = PointsForWin * 2 - 1;
+        _averageMassPerRound = TotalMass / _maxRounds;
+        _bluffedLastRound = false;
+        _currentBluffChance = BluffChance;
+    }
+
+    public float GetNextMove()
     {
         _botScore = Manager.GameManager.GetComponent<GameManager>().OpponentScore;
         _playerScore = Manager.GameManager.GetComponent<GameManager>().PlayerScore;
-        _roundIndex++;
         float nextMoveMass = 0;
-        float averageMassPerRoundStatic = (_averageMassPerRound + (TotalMass / GameLengthPrediction())) / 2;            // Get average mass for rounds only account TotalMass
-        float averageMassPerRoundDynamic = ((TotalMassLeft / _maxRounds) + (TotalMass / GameLengthPrediction())) / 2;   // Get average mass for rounds and account TotalMassLeft
+        int gameLengthPrediction = GameLengthPrediction();
+        float averageMassPerRoundStatic = (_averageMassPerRound + (TotalMass / gameLengthPrediction)) / 2;              // Get average mass for rounds only account TotalMass
+        float averageMassPerRoundDynamic = ((TotalMassLeft / _maxRounds) + (TotalMass / gameLengthPrediction)) / 2;     // Get average mass for rounds and account TotalMassLeft
         nextMoveMass = (averageMassPerRoundStatic + averageMassPerRoundDynamic) / 2;                                    // Get average of Static and Dynamic mass average
 
-        if (DebugMode)
+        if (DebugMode >= 2)
         {
-            Debug.Log("Next Base Move Mass: " + nextMoveMass);
+            Debug.Log("Base Move Mass: " + nextMoveMass);
             Debug.Log("Average Mass Per Round Static: " + averageMassPerRoundStatic);
             Debug.Log("Average Mass Per Round Dynamic: " + averageMassPerRoundDynamic);
         }
 
         if (Bluff())
         {
-            if(DebugMode) Debug.Log("Bluff");
+            if(DebugMode >= 1) Debug.Log("Bluff");
             nextMoveMass *= Random.Range(MinBluffMassMargin, MaxBluffMassMargin);
         }
         else
         {
-            if(DebugMode) Debug.Log("No Bluff");
+            if(DebugMode >= 1) Debug.Log("No Bluff");
             nextMoveMass *= Random.Range(MinNoneBluffMassMultiplier, MaxNoneBluffMassMultiplier);
         }
 
-        if (_playerScore == PointsForWin - 1)
+        if (_roundIndex + 1 == _maxRounds)
         {
-            if(DebugMode) Debug.Log("All in");
+            if(DebugMode >= 1) Debug.Log("All in");
             nextMoveMass = TotalMassLeft;
         }
 
@@ -62,20 +70,26 @@ public static class Bot
 
         TotalMassLeft -= nextMoveMass;
 
-        if(DebugMode) Debug.Log("Next Move Mass: " + nextMoveMass + "\n--------------------------------------------------");
+        if (DebugMode >= 1)
+        {
+            Debug.Log("Move Mass: " + nextMoveMass + "\nMass Left: " + TotalMassLeft);
+            Debug.Log("\n--------------------------------------------------");
+        }
+
+        _roundIndex++;
         return nextMoveMass;
     }
 
-    private static bool Bluff()
+    private bool Bluff()
     {
         _currentBluffChance = BluffChance;
         if (_bluffedLastRound) _currentBluffChance -= BluffIncrease + Random.Range(-BluffMargin, BluffMargin);  // Decrease bluff chance based on recent bluffs
         _currentBluffChance += (_botScore - _playerScore) * (BluffIncrease + Random.Range(-BluffMargin, BluffMargin));  // Increase/Dexrease bluff chance based on point advantage/disadvantage
-        if (DebugMode) Debug.Log("Bluff Chance: " + _currentBluffChance);
+        if (DebugMode >= 1) Debug.Log("Bluff Chance: " + _currentBluffChance);
         return Random.Range(0.0f, 1.0f) < _currentBluffChance;
     }
 
-    private static int GameLengthPrediction()
+    private int GameLengthPrediction()
     {
         if (_playerScore > _botScore) return Random.Range(PointsForWin - _playerScore, _maxRounds);
         return Random.Range(PointsForWin - _botScore, _maxRounds);
