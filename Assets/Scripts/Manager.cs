@@ -2,10 +2,10 @@
 
 public class Manager : MonoBehaviour
 {
-    public static GameObject GameManager;
+    public static GameManager GameManager;
 
     void Start()
     {
-        GameManager = GameObject.Find("GameManager");
+        GameManager = GetComponent<GameManager>();
     }
 }
