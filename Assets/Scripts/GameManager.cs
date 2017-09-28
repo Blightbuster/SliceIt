@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using cakeslice;
-using UnityEditor;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -8,12 +7,13 @@ public class GameManager : MonoBehaviour
     public List<GameObject> SlicingObjects = new List<GameObject>();
     public GameState State;
 
-    public int PlayerScore;
-    public int OpponentScore;
+    public Score Player = new Score();
+    public Score Opponent = new Score();
     public int PointsForWin;
+    public float TotalMassLeft = 1000;
 
     private static GameType _gameMode = GameType.Bot;
-    private static float _lastTotalWeight;
+    private static float _lastTotalMass;
     private readonly Bot _botOpponent = new Bot();
 
     public enum GameState
@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
         LossGame,
         WonRound,
         LossRound,
+        NextRound,
         FinishedMove,
         TimeOver,
         NoMassLeft,
@@ -36,6 +37,12 @@ public class GameManager : MonoBehaviour
         Bot,
         Bluetooth,
         Wifi
+    }
+
+    public class Score
+    {
+        public int Points;
+        public List<float> Moves = new List<float>();
     }
 
     // Testing only
@@ -60,6 +67,8 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.StartGame:
                 InstantiateSlicingObjects();
+                Controller.PlayerUIScoreController.Setup();
+                Controller.OpponentUIScoreController.Setup();
                 State = GameState.Playing;
                 break;
             case GameState.EndGame:
@@ -69,16 +78,27 @@ public class GameManager : MonoBehaviour
             case GameState.LossGame:
                 break;
             case GameState.WonRound:
-                PlayerScore++;
-                State = GameState.Playing;
-                if (PlayerScore >= PointsForWin) State = GameState.WonGame;
+                Player.Points++;
+                UpdateScoreDisplay();
+                State = GameState.NextRound;
+                if (Player.Points >= PointsForWin) State = GameState.WonGame;
                 break;
             case GameState.LossRound:
-                OpponentScore++;
+                Opponent.Points++;
+                UpdateScoreDisplay();
+                State = GameState.NextRound;
+                if (Opponent.Points >= PointsForWin) State = GameState.LossGame;
+                break;
+            case GameState.NextRound:
                 State = GameState.Playing;
-                if (OpponentScore >= PointsForWin) State = GameState.LossGame;
+                if (TotalMassLeft <= 0) State = GameState.LossGame;
                 break;
             case GameState.FinishedMove:
+                if (GetMassOnScale() == 0)
+                {
+                    State = GameState.Playing;
+                    break;   
+                }
                 State = GameState.WaitForOpponent;
                 break;
             case GameState.TimeOver:
@@ -90,7 +110,11 @@ public class GameManager : MonoBehaviour
             case GameState.WaitForOpponent:
                 if (_gameMode == GameType.Bot)
                 {
-                    State = _lastTotalWeight > _botOpponent.GetNextMove() ? GameState.WonRound : GameState.LossRound;
+                    float botMove = _botOpponent.GetNextMove();
+                    State = _lastTotalMass > botMove ? GameState.WonRound : GameState.LossRound;
+                    TotalMassLeft -= _lastTotalMass;
+                    Player.Moves.Add(_lastTotalMass);
+                    Opponent.Moves.Add(botMove);
                 }
                 break;
         }
@@ -100,12 +124,12 @@ public class GameManager : MonoBehaviour
     {
         if (_gameMode == GameType.Bot)
         {
-            foreach (GameObject slice in GetComponent<TagController>().TagWeigh)
+            foreach (GameObject slice in Controller.TagController.TagWeigh)
             {
                 slice.AddComponent<FadeAndDestroy>();
             }
         }
-        _lastTotalWeight = GetWeightOnScale();
+        _lastTotalMass = GetMassOnScale();
         State = GameState.FinishedMove;
     }
 
@@ -119,14 +143,20 @@ public class GameManager : MonoBehaviour
         SlicingObjects = tmpSlicingObjects;
     }
 
-    public float GetWeightOnScale()
+    public float GetMassOnScale()
     {
         // Get weight of all slices -> Sum them up -> Display the value on the screen
         float totalWeigh = 0;
-        foreach (GameObject go in GetComponent<TagController>().TagWeigh)
+        foreach (GameObject go in Controller.TagController.TagWeigh)
         {
             totalWeigh += go.GetComponent<Rigidbody2D>().mass;
         }
         return totalWeigh;
+    }
+
+    private void UpdateScoreDisplay()
+    {
+        Controller.PlayerUIScoreController.UpdatePoints();
+        Controller.OpponentUIScoreController.UpdatePoints();
     }
 }
