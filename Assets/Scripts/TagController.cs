@@ -6,6 +6,7 @@ using UnityEngine;
 public class TagController : MonoBehaviour
 {
     public List<GameObject> TagWeigh;
+    public List<GameObject> TagSlice;
 
     public GameObject Scale;
 
@@ -32,6 +33,10 @@ public class TagController : MonoBehaviour
                 if (go.activeSelf && go.GetComponent<MeshRenderer>().bounds.center.x > _scalLowerLeftCorner.x)
                 {
                     if (go.GetComponent<GroundChecker>().IsGrounded && !go.CompareTag("Destroy")) TagWeigh.Add(go);
+                }
+                if (go.activeSelf && !go.CompareTag("Destroy"))
+                {
+                    TagSlice.Add(go);
                 }
             }
         }
