@@ -34,13 +34,13 @@ public class Bot
 
     public float GetNextMove()
     {
-        _botScore = Manager.GameManager.GetComponent<GameManager>().OpponentScore;
-        _playerScore = Manager.GameManager.GetComponent<GameManager>().PlayerScore;
+        _botScore = Manager.GameManager.Opponent.Points;
+        _playerScore = Manager.GameManager.Player.Points;
         float nextMoveMass = 0;
         int gameLengthPrediction = GameLengthPrediction();
-        float averageMassPerRoundStatic = (_averageMassPerRound + (TotalMass / gameLengthPrediction)) / 2;              // Get average mass for rounds only account TotalMass
-        float averageMassPerRoundDynamic = ((TotalMassLeft / _maxRounds) + (TotalMass / gameLengthPrediction)) / 2;     // Get average mass for rounds and account TotalMassLeft
-        nextMoveMass = (averageMassPerRoundStatic + averageMassPerRoundDynamic) / 2;                                    // Get average of Static and Dynamic mass average
+        float averageMassPerRoundStatic = (_averageMassPerRound + (TotalMass / gameLengthPrediction)) / 2;              // Get average Mass for rounds only account TotalMass
+        float averageMassPerRoundDynamic = ((TotalMassLeft / _maxRounds) + (TotalMass / gameLengthPrediction)) / 2;     // Get average Mass for rounds and account TotalMassLeft
+        nextMoveMass = (averageMassPerRoundStatic + averageMassPerRoundDynamic) / 2;                                    // Get average of Static and Dynamic Mass average
 
         if (DebugMode >= 2)
         {

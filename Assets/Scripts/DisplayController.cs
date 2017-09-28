@@ -30,7 +30,7 @@ public class DisplayController : MonoBehaviour
 
     void Update()
     {
-        TargetNumber = Manager.GameManager.GetComponent<GameManager>().GetWeightOnScale();
+        TargetNumber = Manager.GameManager.GetMassOnScale();
     }
 
     private void FixedUpdate()
