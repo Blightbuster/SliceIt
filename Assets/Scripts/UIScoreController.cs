@@ -37,9 +37,12 @@ public class UIScoreController : MonoBehaviour
                 PointList[i].GetComponent<Image>().color = _enabledColor;
             }
         }
-        for (int i = 0; i < Manager.GameManager.Opponent.Points; i++)
+        else
         {
-            PointList[i].GetComponent<Image>().color = _enabledColor;
+            for (int i = 0; i < Manager.GameManager.Opponent.Points; i++)
+            {
+                PointList[i].GetComponent<Image>().color = _enabledColor;
+            }
         }
     }
 }
