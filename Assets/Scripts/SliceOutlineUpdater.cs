@@ -16,6 +16,6 @@ public class SliceOutlineUpdater : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _outline.color = _tagController.TagWeigh.Contains(gameObject) ? 1 : 0;  // Change outline-color of slice when on the scale to Color-1 else Color-0
+        _outline.color = _tagController.TagWeigh.Contains(gameObject) ? 2 : 1;  // Change outline-color of slice when on the scale to Color-1 else Color-0
     }
 }

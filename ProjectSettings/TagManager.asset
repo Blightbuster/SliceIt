@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Slice
   - Destroy
+  - Ground
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - Border
   - 
   - SliceObject
   - 
