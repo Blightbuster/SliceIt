@@ -5,6 +5,8 @@ namespace Game
 {
     public class GameManager : MonoBehaviour
     {
+        public GameObject Canvas;
+        public GameObject PlayingField;
         public List<GameObject> SlicingObjects = new List<GameObject>();
         public GameState State;
 
@@ -49,11 +51,14 @@ namespace Game
 
         private void Start()
         {
-            StartGame(5, (GameType)Scenes.GetInt("Gamemode"));
+            //StartGame(5, (GameType)Scenes.GetInt("Gamemode"));
+            StartGame(5, 0);    // Debug only
         }
 
         public void StartGame(int iPointsForWin, GameType iGameMode)
         {
+            Canvas = GameObject.Find("Canvas");
+            PlayingField = GameObject.Find("PlayingField");
             PointsForWin = iPointsForWin;
             _gameMode = iGameMode;
             State = GameState.StartGame;
@@ -73,6 +78,7 @@ namespace Game
                     State = GameState.Playing;
                     break;
                 case GameState.EndGame:
+                    Scenes.Load("Main");
                     break;
                 case GameState.WonGame:
                     State = GameState.ShowRoundResults;
@@ -121,8 +127,10 @@ namespace Game
                     }
                     break;
                 case GameState.ShowRoundResults:
+                    Canvas.transform.Find("FinishMove").gameObject.SetActive(false);
+                    Canvas.transform.Find("ExitGame").gameObject.SetActive(true);
+                    PlayingField.SetActive(false);
                     Controller.RoundResultsController.enabled = true;
-                    State = GameState.EndGame;
                     break;
             }
         }
@@ -140,14 +148,9 @@ namespace Game
             State = GameState.FinishedMove;
         }
 
-        private void InstantiateSlicingObjects()
+        public void SetState(string tmpState)
         {
-            List<GameObject> tmpSlicingObjects = new List<GameObject>();
-            foreach (GameObject slicingObject in SlicingObjects)
-            {
-                tmpSlicingObjects.Add(Instantiate(slicingObject));
-            }
-            SlicingObjects = tmpSlicingObjects;
+            State = (GameState) System.Enum.Parse(typeof(GameState), tmpState);
         }
 
         public float GetMassOnScale()
@@ -165,6 +168,16 @@ namespace Game
         {
             Controller.PlayerUIScoreController.UpdatePoints();
             Controller.OpponentUIScoreController.UpdatePoints();
+        }
+
+        private void InstantiateSlicingObjects()
+        {
+            List<GameObject> tmpSlicingObjects = new List<GameObject>();
+            foreach (GameObject slicingObject in SlicingObjects)
+            {
+                tmpSlicingObjects.Add(Instantiate(slicingObject));
+            }
+            SlicingObjects = tmpSlicingObjects;
         }
     }
 }
