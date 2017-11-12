@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Game
@@ -39,8 +41,7 @@ namespace Game
         public enum GameType
         {
             Bot,
-            Bluetooth,
-            Wifi
+            Online,
         }
 
         public class Score
@@ -132,6 +133,8 @@ namespace Game
                     PlayingField.SetActive(false);
                     Controller.RoundResultsController.enabled = true;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -172,11 +175,7 @@ namespace Game
 
         private void InstantiateSlicingObjects()
         {
-            List<GameObject> tmpSlicingObjects = new List<GameObject>();
-            foreach (GameObject slicingObject in SlicingObjects)
-            {
-                tmpSlicingObjects.Add(Instantiate(slicingObject));
-            }
+            List<GameObject> tmpSlicingObjects = SlicingObjects.Select(Instantiate).ToList();
             SlicingObjects = tmpSlicingObjects;
         }
     }

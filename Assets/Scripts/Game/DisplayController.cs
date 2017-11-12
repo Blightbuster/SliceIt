@@ -30,7 +30,7 @@ namespace Game
             }
         }
 
-        void Update()
+        private void Update()
         {
             TargetNumber = Manager.GameManager.GetMassOnScale();
         }

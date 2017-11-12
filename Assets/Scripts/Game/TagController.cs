@@ -13,7 +13,7 @@ namespace Game
         private Vector2 _scalLowerLeftCorner;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             Bounds bounds = Scale.GetComponent<SpriteRenderer>().bounds; // Get the boundingbox of the parents sprite
             _scalLowerLeftCorner = bounds.min; // bounds.min is the lower-left corner of the sprite
@@ -21,7 +21,7 @@ namespace Game
 
         // LateUpdate is execute after all update cycles are finished
         // Here you have to use LateUpdate because some slices may move in update functions
-        void LateUpdate()
+        private void LateUpdate()
         {
             TagWeigh.Clear();
 

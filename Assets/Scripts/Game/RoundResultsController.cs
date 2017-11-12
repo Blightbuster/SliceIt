@@ -16,7 +16,7 @@ namespace Game
         [SerializeField] private Vector3 _positionOpponentScore;
         private List<GameObject> _scores = new List<GameObject>();
 
-        void OnEnable()
+        private void OnEnable()
         {
             DisplayScores(_positionPlayerScore, Manager.GameManager.Player, Manager.GameManager.Opponent);
             DisplayScores(_positionOpponentScore, Manager.GameManager.Opponent, Manager.GameManager.Player);
@@ -34,7 +34,7 @@ namespace Game
             }
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             for (int i = 0; i < _scores.Count; i++)
             {

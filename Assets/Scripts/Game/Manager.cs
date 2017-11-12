@@ -6,12 +6,12 @@ namespace Game
     public class Manager : MonoBehaviour
     {
         public static GameManager GameManager;
-        public static NetworkManager NetworkManager;
+        public static MultiplayerManager MultiplayerManager;
 
-        void Start()
+        private void Start()
         {
             GameManager = GetComponentInChildren<GameManager>();
-            NetworkManager = GetComponentInChildren<NetworkManager>();
+            MultiplayerManager = GetComponentInChildren<MultiplayerManager>();
         }
     }
 }

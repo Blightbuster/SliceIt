@@ -8,13 +8,13 @@ namespace Game
         private Outline _outline;
 
         // Use this for initialization
-        void Start()
+        private void Start()
         {
             _outline = GetComponent<Outline>();
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
             _outline.color = Controller.TagController.TagWeigh.Contains(gameObject) ? 2 : 1;  // Change outline-color of slice when on the scale to Color-1 else Color-0
         }

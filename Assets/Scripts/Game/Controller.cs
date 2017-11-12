@@ -13,7 +13,7 @@ namespace Game
         public static UIScoreController OpponentUIScoreController;
         public static RoundResultsController RoundResultsController;
 
-        void Start()
+        private void Start()
         {
             DisplayController = GetComponent<DisplayController>();
             DragController = GetComponent<DragController>();
