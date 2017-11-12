@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<ArrayOfCMDSettingOfObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:boolean">true</Data>
+    <Identifier>ATTACH_TO_UNITY_CONSOLE</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:boolean">true</Data>
+    <Identifier>CMDPLUS_ENABLED</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:int">200</Data>
+    <Identifier>LOG_MAX_AMOUNT</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:boolean">true</Data>
+    <Identifier>SAVE_LOGS_ON_EXIT</Identifier>
+  </CMDSettingOfObject>
+</ArrayOfCMDSettingOfObject>

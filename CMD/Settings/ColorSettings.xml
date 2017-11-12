@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<ArrayOfCMDSettingOfObject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">0.1911765/0.1911765/0.1911765/0.828</Data>
+    <Identifier>COLOR_BACKGROUND_WINDOW</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">0/1/0.1310344/1</Data>
+    <Identifier>COLOR_COMMAND_NAME_EXECUTION</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">1/0.1544118/0.1544118/1</Data>
+    <Identifier>COLOR_ERROR</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">0.9191176/0.9258758/0.9258758/1</Data>
+    <Identifier>COLOR_LOG</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">0.9338235/0.9890466/1/1</Data>
+    <Identifier>COLOR_TEXT</Identifier>
+  </CMDSettingOfObject>
+  <CMDSettingOfObject>
+    <Data xsi:type="xsd:string">0.8358191/0.8823529/0.03892732/1</Data>
+    <Identifier>COLOR_WARNING</Identifier>
+  </CMDSettingOfObject>
+</ArrayOfCMDSettingOfObject>
