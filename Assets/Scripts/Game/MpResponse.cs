@@ -6,18 +6,25 @@ namespace Game
 {
     public class MpResponse : MonoBehaviour
     {
-        public class Status
+        public abstract class BaseResponse { }
+
+        public class Status : BaseResponse
         {
-            public bool Succes;
+            public bool Success;
             public string ErrorLevel;
         }
 
-        public class List
+        public class Token : BaseResponse
+        {
+            public string ClientToken;
+        }
+
+        public class List : BaseResponse
         {
             public List<string> Data;
         }
 
-        public class Move
+        public class Move : BaseResponse
         {
             public float Mass;
         }
