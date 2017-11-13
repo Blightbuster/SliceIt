@@ -4,10 +4,12 @@ namespace Game
 {
     public class MpRequest : MonoBehaviour
     {
+        // All Actions which are used in the requests
         public enum Action
         {
             Register,
             Login,
+            Logout,
             QuickMatch,
             CancelQuickMatch,
             CreatePrivateGame,
@@ -16,14 +18,27 @@ namespace Game
             FinishMove
         }
 
+        // --- Classes for inheritance ---
+
         public abstract class BaseRequest
         {
-            public string ClientName = ZPlayerPrefs.GetString("ClientName", "");
-            public string ClientPassword = ZPlayerPrefs.GetString("ClientPassword", "");
             public string ActionType;
         }
 
-        public class Register : BaseRequest
+        public abstract class PasswordAuth : BaseRequest
+        {
+            public string ClientName = SecurePlayerPrefs.GetString("ClientName", "");
+            public string ClientPassword = SecurePlayerPrefs.GetString("ClientPassword", "");
+        }
+
+        public abstract class TokenAuth : BaseRequest
+        {
+            public string ClientToken = SecurePlayerPrefs.GetString("ClientToken", "");
+        }
+
+        // --- All Request below are send to the Server ---
+
+        public class Register : PasswordAuth
         {
             public Register()
             {
@@ -31,7 +46,7 @@ namespace Game
             }
         }
 
-        public class Login : BaseRequest
+        public class Login : PasswordAuth
         {
             public Login()
             {
@@ -39,7 +54,15 @@ namespace Game
             }
         }
 
-        public class QuickMatch : BaseRequest
+        public class Logout : TokenAuth
+        {
+            public Logout()
+            {
+                ActionType = Action.Logout.ToString();
+            }
+        }
+
+        public class QuickMatch : TokenAuth
         {
             public QuickMatch()
             {
@@ -47,7 +70,7 @@ namespace Game
             }
         }
 
-        public class CancelQuickMatch : BaseRequest
+        public class CancelQuickMatch : TokenAuth
         {
             public CancelQuickMatch()
             {
@@ -55,7 +78,7 @@ namespace Game
             }
         }
 
-        public class CreatePrivateGame : BaseRequest
+        public class CreatePrivateGame : TokenAuth
         {
             public string GamePassword = "";
             public CreatePrivateGame()
@@ -64,17 +87,17 @@ namespace Game
             }
         }
 
-        public class JoinPrivateGame : BaseRequest
+        public class JoinPrivateGame : TokenAuth
         {
-            public string GamePassword = "";
             public string GameName = "";
+            public string GamePassword = "";
             public JoinPrivateGame()
             {
                 ActionType = Action.JoinPrivateGame.ToString();
             }
         }
 
-        public class GetAvaibleGames : BaseRequest
+        public class GetAvaibleGames : TokenAuth
         {
             public GetAvaibleGames()
             {
@@ -82,7 +105,7 @@ namespace Game
             }
         }
 
-        public class FinishMove : BaseRequest
+        public class FinishMove : TokenAuth
         {
             public float Mass = 0;
             public FinishMove()
