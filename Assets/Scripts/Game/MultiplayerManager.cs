@@ -24,6 +24,7 @@ namespace Game
             DontDestroyOnLoad(this);
 
             ConnectToServer();
+            Login("Blightbuster", "Nic3Pa55w0rd");
         }
 
         public bool ConnectToServer()
@@ -60,39 +61,66 @@ namespace Game
 
         public bool Register(string clientName, string clientPassword)
         {
-            // Set new Login credentials
-            ZPlayerPrefs.SetString("ClientName", clientName);
-            ZPlayerPrefs.SetString("ClientPassword", clientPassword);
+            // Set new Login Credentials
+            SecurePlayerPrefs.SetString("ClientName", clientName);
+            SecurePlayerPrefs.SetString("ClientPassword", clientPassword);
 
-            MpResponse.Status response = (MpResponse.Status)SendRequest(new MpRequest.Register(), typeof(MpResponse.Status));
+            string rawResponse = SendRequest(new MpRequest.Register());
 
-            if (response.Succes) return true;
-
-            // At this point we know, that the registration failed
-            if (response.ErrorLevel == "UsernameAlreadyTaken")
+            // Check if Request failed
+            if (IsSuccessResponse(rawResponse))
             {
-                Debug.Log("Username already taken");
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                Debug.Log(statusResponse.ErrorLevel);
+                return false;
             }
-            return false;
+
+            // Handle response
+            MpResponse.Token response = JsonUtility.FromJson<MpResponse.Token>(rawResponse);
+            SecurePlayerPrefs.SetString("ClientToken", response.ClientToken);
+            LoggedIn = true;
+
+            Debug.Log("Successfully registered as: " + clientName);
+            return true;
         }
 
         public bool Login(string clientName, string clientPassword)
         {
-            // Set new Login credentials
-            ZPlayerPrefs.SetString("ClientName", clientName);
-            ZPlayerPrefs.SetString("ClientPassword", clientPassword);
+            // Set new Login Credentials
+            SecurePlayerPrefs.SetString("ClientName", clientName);
+            SecurePlayerPrefs.SetString("ClientPassword", clientPassword);
 
             // Send request
-            MpResponse.Status response = (MpResponse.Status)SendRequest(new MpRequest.Login(), typeof(MpResponse.Status));
+            string rawResponse = SendRequest(new MpRequest.Login());
 
-            LoggedIn = response.Succes; // Set status
+            // Check if Request failed
+            if (IsSuccessResponse(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                LoggedIn = statusResponse.Success;
+                Debug.Log(statusResponse.ErrorLevel);
+                return false;
+            }
+
+            // Handle response
+            MpResponse.Token response = JsonUtility.FromJson<MpResponse.Token>(rawResponse);
+            SecurePlayerPrefs.SetString("ClientToken", response.ClientToken);
+            LoggedIn = true;    // Set status
+
             Debug.Log(LoggedIn ? "Logged in successfully" : "Login failed");
-            return LoggedIn;            // Finally return result of login
+            return LoggedIn;    // Finally return result of login
         }
 
-        // ----- Only helper functions from here on -----
+        public bool Logout()
+        {
+            SendRequest(new MpRequest.Logout());    // Send request
+            LoggedIn = false;
+            return true;
+        }
 
-        private object SendRequest(object request, Type responseType, Action callback = null)
+        // --- Only helper functions from here on ---
+
+        private string SendRequest(object request, Action callback = null)
         {
             if (!_connectedToServer) if (!ConnectToServer()) return null;                   // Are we already connected to the server?
             var data = System.Text.Encoding.ASCII.GetBytes(JsonUtility.ToJson(request));    // Convert object -> json -> bytes
@@ -102,10 +130,11 @@ namespace Game
             {
                 data = new byte[2048];
                 var bytes = _stream.Read(data, 0, data.Length);                             // Buffer to store response bytes
-                return JsonUtility.FromJson(System.Text.Encoding.ASCII.GetString(data, 0, bytes), responseType);    // Convert bytes -> json -> object
+                return System.Text.Encoding.ASCII.GetString(data, 0, bytes);                // Convert bytes -> json
             }
             else
             {
+                // TODO ADD CALLBACK TO GIVEN FUNCTIO
                 return null;
             }
         }
@@ -115,6 +144,11 @@ namespace Game
             var buffer = (byte[])response.AsyncState;
             var bytesAvailable = _stream.EndRead(response);
             return JsonUtility.FromJson(System.Text.Encoding.ASCII.GetString(buffer, 0, bytesAvailable), responseType);
+        }
+
+        private static bool IsSuccessResponse(string response)
+        {
+            return response.Contains("Success");
         }
     }
 }
