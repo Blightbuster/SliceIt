@@ -439,6 +439,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75dc4995c1ee81b4e99eec80449c6a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LoggedIn: 0
+  Popup: {fileID: 0}
   _server: localhost
   _port: 1531
 --- !u!4 &749144963

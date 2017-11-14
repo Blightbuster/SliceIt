@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game
+namespace Other
 {
     public class MpResponse : MonoBehaviour
     {

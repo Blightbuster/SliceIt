@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Game;
+using UnityEngine;
 
-namespace Game
+namespace Other
 {
     public class MpRequest : MonoBehaviour
     {
