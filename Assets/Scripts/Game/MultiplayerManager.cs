@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Sockets;
 using Other;
-using UnityEditor;
 using UnityEngine;
 
 namespace Game
@@ -9,7 +10,7 @@ namespace Game
     public class MultiplayerManager : MonoBehaviour
     {
         public bool LoggedIn = false;
-        public GameObject Popup;
+        public static MultiplayerManager Instance = null;
 
         [SerializeField]
         private string _server = "localhost";
@@ -20,15 +21,50 @@ namespace Game
         private NetworkStream _stream;
 
         private static bool _connectedToServer = false;
-        private static bool _initialized = false;
 
-        public void Start()
+        private static CallbackType _expectedCallback;
+        private static bool _receivedCallback = false;
+        private static string _callbackResponse;
+
+        private enum CallbackType
         {
-            if (_connectedToServer || _initialized) return;
+            None,
+            QuickMatch,
+            FinishMove
+        }
 
-            if (!_initialized) _initialized = true;
-            DontDestroyOnLoad(this);
-            ConnectToServer();
+        private void Start()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+                DontDestroyOnLoad(this);
+            }
+            if (_connectedToServer == false)
+            {
+                ConnectToServer();
+            }
+            if (!SecurePlayerPrefs.HasKey("IsRegistered"))
+            {
+                SecurePlayerPrefs.SetInt("IsRegistered", 0);
+            }
+        }
+
+        private void Update()
+        {
+            if (!_receivedCallback) return;
+
+            switch (_expectedCallback)
+            {
+                case CallbackType.FinishMove:
+                    FinishMoveCallback();
+                    break;
+                case CallbackType.QuickMatch:
+                    QuickMatchCallback();
+                    break;
+            }
+            _expectedCallback = CallbackType.None;
+            _receivedCallback = false;
         }
 
         public bool ConnectToServer()
@@ -38,12 +74,12 @@ namespace Game
                 _client = new TcpClient(_server, _port);
                 _stream = _client.GetStream();
                 _connectedToServer = true;
-                Debug.Log("Connected to Server");
+                Other.Tools.CreatePopup(Other.Tools.Messages.ConnectionSuccess);
                 return true;
             }
             catch (Exception)
             {
-                Debug.Log("Couldn't connect to Server");
+                Other.Tools.CreatePopup(Other.Tools.Messages.ConnectionError);
                 _connectedToServer = false;
                 return false;
             }
@@ -56,6 +92,7 @@ namespace Game
             {
                 _stream.Close();
                 _client.Close();
+                Other.Tools.CreatePopup(Other.Tools.Messages.DisconnectServer);
             }
             catch (Exception)
             {
@@ -63,7 +100,7 @@ namespace Game
             }
             _connectedToServer = false;
         }
-        
+
         /* --- Requests---
          * 
          * Schedule of requests is commonly as follown:
@@ -81,13 +118,13 @@ namespace Game
             SecurePlayerPrefs.SetString("ClientPassword", clientPassword);
 
             // Send request
-            string rawResponse = SendRequest(new MpRequest.Register(), null, false);    // We dont need a token for this request -> ignore if token is expired
+            string rawResponse = SendRequest(new MpRequest.Register(), CallbackType.None, false);    // We dont need a token for this request -> ignore if token is expired
 
             // Check if request failed
             if (RequestFailed(rawResponse))
             {
                 MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
-                if(statusResponse.ErrorLevel == "UsernameAlreadyTaken") Debug.Log("Username already Taken");
+                if (statusResponse.ErrorLevel == "UsernameAlreadyTaken") Debug.Log("Username already Taken");
                 return false;
             }
 
@@ -96,19 +133,26 @@ namespace Game
             SecurePlayerPrefs.SetString("ClientToken", response.ClientToken);           // Set new token
             SecurePlayerPrefs.SetInt("ClientTokenExpire", CurrentTimestamp() + 3600);   // We add 3600 seconds because the token will be valid for one hour
             LoggedIn = true;    // Set status
+            SecurePlayerPrefs.SetInt("IsRegistered", 1);
 
-            Debug.Log("Successfully registered as: " + clientName);
+            Other.Tools.CreatePopup(Other.Tools.Messages.RegisterSuccess);
             return true;
         }
 
-        public bool Login()
+        public bool Login(bool showPopups = true)
         {
-            return Login(SecurePlayerPrefs.GetString("ClientName"), SecurePlayerPrefs.GetString("ClientPassword"));
+            return Login(SecurePlayerPrefs.GetString("ClientName"), SecurePlayerPrefs.GetString("ClientPassword"), showPopups);
         }
 
-        public bool Login(string clientName, string clientPassword)
+        public bool Login(string clientName, string clientPassword, bool showPopups = true)
         {
-            if (!(clientName == null || clientPassword == null))
+            if (!IsUsernameAllowed(clientName))
+            {
+                Other.Tools.CreatePopup(Other.Tools.Messages.UsernameNotAllowed + "\n" + Other.Tools.Messages.UsernameInfo);    // Show even when Popups are disabled
+                return false;
+            }
+
+            if (clientName != SecurePlayerPrefs.GetString("ClientName") || clientPassword != SecurePlayerPrefs.GetString("ClientPassword"))
             {
                 // Set new Login Credentials
                 SecurePlayerPrefs.SetString("ClientName", clientName);
@@ -116,13 +160,13 @@ namespace Game
             }
 
             // Send request
-            string rawResponse = SendRequest(new MpRequest.Login(), null, false);   // We dont need a token for this request -> ignore if token is expired
+            string rawResponse = SendRequest(new MpRequest.Login(), CallbackType.None, false);       // We dont need a token for this request -> ignore if token is expired
 
             // Check if request failed
             if (RequestFailed(rawResponse))
             {
                 MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
-                if(statusResponse.ErrorLevel == "InvalidLogin") Debug.Log("Invalid Login");
+                if (statusResponse.ErrorLevel == "InvalidLogin" && showPopups) Other.Tools.CreatePopup(Other.Tools.Messages.InvalidLogin);
                 return false;
             }
 
@@ -132,8 +176,7 @@ namespace Game
             SecurePlayerPrefs.SetInt("ClientTokenExpire", CurrentTimestamp() + 3600);   // We add 3600 seconds because the token will be valid for one hour
             LoggedIn = true;    // Set status
 
-            Other.Tools.CreatePopup("Successfully logged in!", 2);
-            Debug.Log("Successfully logged in");
+            if (showPopups) Other.Tools.CreatePopup(Other.Tools.Messages.LoggedIn);
             return true;
         }
 
@@ -146,11 +189,7 @@ namespace Game
             if (RequestFailed(rawResponse))
             {
                 MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
-                if (InvalidToken(statusResponse, true))
-                {
-                    Debug.Log("Invalid Token. Requesting new one and retrying logout.");
-                    Logout();
-                }
+                InvalidToken(statusResponse);
                 return false;
             }
 
@@ -159,48 +198,205 @@ namespace Game
             SecurePlayerPrefs.SetString("ClientPassword", "");
             SecurePlayerPrefs.SetInt("ClientTokenExpire", 0);
             LoggedIn = false;
+            Other.Tools.CreatePopup(Other.Tools.Messages.LoggedOut);
             return true;
+        }
+
+        public void QuickMatch()
+        {
+            // Send request
+            SendRequest(new MpRequest.QuickMatch(), CallbackType.QuickMatch);
+        }
+
+        private void QuickMatchCallback()
+        {
+            string rawResponse = _callbackResponse;
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+                if (statusResponse.ErrorLevel == "AlreadyInQueue") Other.Tools.CreatePopup(Other.Tools.Messages.AlreadyInQueue);
+            }
+            else
+            {
+                // Handle request
+                MpResponse.Player playerResponse = JsonUtility.FromJson<MpResponse.Player>(rawResponse);
+                Scenes.SetString("GameMode", "Online");
+                Scenes.SetString("OpponentName", playerResponse.PlayerName);
+                Scenes.Load("Game");
+                Other.Tools.CreatePopup(Other.Tools.Messages.SearchingGames);
+            }
+        }
+
+        public bool CancelQuickMatch()
+        {
+            // Send request
+            string rawResponse = SendRequest(new MpRequest.CancelQuickMatch());
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+                return false;
+            }
+
+            // Handle request
+            Scenes.Load("Multiplayer");
+            return true;
+        }
+
+        public bool CreatePrivateGame(string gamePassword)
+        {
+            // Configure request
+            MpRequest.CreatePrivateGame request = new MpRequest.CreatePrivateGame();
+            request.GamePassword = gamePassword;
+
+            // Send request
+            string rawResponse = SendRequest(request);
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+                if (statusResponse.ErrorLevel == "AlreadyCreatedGame") Other.Tools.CreatePopup(Other.Tools.Messages.AlreadyCreatedGame);
+                return false;
+            }
+
+            // Handle response
+            Other.Tools.CreatePopup(Other.Tools.Messages.CreatePrivateGame);
+            return true;
+        }
+
+        public bool JoinPrivateGame(string gameName, string gamePassword)
+        {
+            // Configure request
+            MpRequest.JoinPrivateGame request = new MpRequest.JoinPrivateGame();
+            request.GameName = gameName;
+            request.GamePassword = gamePassword;
+
+            // Send request
+            string rawResponse = SendRequest(request);
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+                if (statusResponse.ErrorLevel == "InvalidGameName") Other.Tools.CreatePopup(Other.Tools.Messages.CouldntFindGame);
+                if (statusResponse.ErrorLevel == "InvalidPassword") Other.Tools.CreatePopup(Other.Tools.Messages.InvalidGamePassword);
+                return false;
+            }
+
+            // Handle response
+            Scenes.SetString("GameMode", "Online");
+            Scenes.SetString("OpponentName", gameName);
+            Scenes.Load("Game");
+            return true;
+        }
+
+        public List<string> GetAvaibleGames()
+        {
+            // Send request
+            string rawResponse = SendRequest(new MpRequest.GetAvaibleGames());
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+            }
+
+            // Handle response
+            MpResponse.AvaibleGames avaibleGamesResponse = JsonUtility.FromJson<MpResponse.AvaibleGames>(rawResponse);
+            return avaibleGamesResponse.GameNames;
+        }
+        
+        public void FinishMove(float mass)
+        {
+            // Configure request
+            MpRequest.FinishMove request = new MpRequest.FinishMove();
+            request.Mass = mass;
+
+            // Send request
+            SendRequest(request, CallbackType.FinishMove);
+        }
+
+        private void FinishMoveCallback()
+        {
+            string rawResponse = _callbackResponse;
+
+            // Check if request failed
+            if (RequestFailed(rawResponse))
+            {
+                MpResponse.Status statusResponse = JsonUtility.FromJson<MpResponse.Status>(rawResponse);
+                InvalidToken(statusResponse);
+                if (statusResponse.ErrorLevel == "NotInGame") Other.Tools.CreatePopup(Other.Tools.Messages.NotInGame);
+                if (statusResponse.ErrorLevel == "InvalidMass") Other.Tools.CreatePopup(Other.Tools.Messages.Error);
+            }
+
+            // Handle response
+            MpResponse.Move moveResponse = JsonUtility.FromJson<MpResponse.Move>(rawResponse);
+            if (GameManager.Instance.State == GameManager.GameState.WaitForOpponent) GameManager.Instance.OpponentMove(moveResponse.Mass);
         }
 
         // --- Only helper functions from here on ---
 
-        private string SendRequest(object request, Action callback = null, bool checkTokenExpire = true)
+        private string SendRequest(object request, CallbackType callback = CallbackType.None, bool checkTokenExpire = true)
         {
             if (checkTokenExpire && CurrentTimestamp() > SecurePlayerPrefs.GetInt("ClientTokenExpire")) Login();
 
             if (!_connectedToServer) if (!ConnectToServer()) return null;                   // Are we already connected to the server?
+
+            // Send request
             var data = System.Text.Encoding.ASCII.GetBytes(JsonUtility.ToJson(request));    // Convert object -> json -> bytes
             _stream.Write(data, 0, data.Length);                                            // Write data to stream
             _stream.Flush();                                                                // Flush and wait for respons
-            if (callback == null)
+
+            // Receive response
+            byte[] buffer;
+            if (callback == CallbackType.None)
             {
-                data = new byte[2048];
-                var bytes = _stream.Read(data, 0, data.Length);                             // Buffer to store response bytes
+                buffer = new byte[1024];                                                    // Create buffer to store response
+                var bytes = _stream.Read(data, 0, data.Length);                             // Read response bytes
                 return System.Text.Encoding.ASCII.GetString(data, 0, bytes);                // Convert bytes -> json
             }
             else
             {
-                // TODO ADD CALLBACK TO GIVEN FUNCTION
+                _expectedCallback = callback;
+                buffer = new byte[1024];                                                    // Create buffer to store response
+                _stream.BeginRead(data, 0, data.Length, ResponseCallback, data);            // Read response bytes
                 return null;
             }
         }
 
-        private object BytesToObject(IAsyncResult response, Type responseType)
+        private void ResponseCallback(IAsyncResult response)
+        {
+            _callbackResponse = BytesToString(response);
+            _receivedCallback = true;
+        }
+
+        private string BytesToString(IAsyncResult response)
         {
             var buffer = (byte[])response.AsyncState;
             var bytesAvailable = _stream.EndRead(response);
-            return JsonUtility.FromJson(System.Text.Encoding.ASCII.GetString(buffer, 0, bytesAvailable), responseType);
+            return System.Text.Encoding.ASCII.GetString(buffer, 0, bytesAvailable);
         }
 
         private static bool RequestFailed(string response)
         {
-            return response.Contains("\"Success\":\"false\"");
+            return response.Contains("\"Success\":false");
         }
 
-        private bool InvalidToken(MpResponse.Status response, bool requestNewToken)
+        private bool InvalidToken(MpResponse.Status response)
         {
             if (response.ErrorLevel != "InvalidToken") return false;
-            Login(SecurePlayerPrefs.GetString("ClientName"), SecurePlayerPrefs.GetString("ClientPassword"));
+            Debug.Log("Invalid Token. Requesting new one");
+            Other.Tools.CreatePopup(Other.Tools.Messages.Error);
+            Login(false);
             return true;
         }
 
@@ -215,6 +411,12 @@ namespace Game
 
             TimeSpan epochStart = DateTime.UtcNow - new DateTime(1970, 1, 1, 8, 0, 0, DateTimeKind.Utc);
             return (int)Math.Floor(epochStart.TotalSeconds);
+        }
+
+        private static bool IsUsernameAllowed(string username)
+        {
+            if (username.All(c => char.IsLetterOrDigit(c) || c.Equals('_'))) return true;   // LINQ is love, LINQ is live
+            return false;
         }
     }
 }
