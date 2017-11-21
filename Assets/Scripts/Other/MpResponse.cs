@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.Remoting.Channels;
 using UnityEngine;
 
 namespace Other
@@ -18,14 +19,19 @@ namespace Other
             public string ClientToken;
         }
 
-        public class List : BaseResponse
+        public class AvaibleGames : BaseResponse
         {
-            public List<string> Data;
+            public List<string> GameNames;
         }
 
         public class Move : BaseResponse
         {
             public float Mass;
+        }
+
+        public class Player : BaseResponse
+        {
+            public string PlayerName;
         }
     }
 }
