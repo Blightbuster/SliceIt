@@ -1,42 +1,45 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
-public static class Scenes
+namespace Other
 {
-    private static Dictionary<string, string> _parameters = new Dictionary<string, string>();
-
-    public static void Load(string sceneName)
+    public static class Scenes
     {
-        SceneManager.LoadScene(sceneName);
-    }
+        private static Dictionary<string, string> _parameters = new Dictionary<string, string>();
 
-    public static string GetString(string paramKey)
-    {
-        return _parameters[paramKey];
-    }
+        public static void Load(string sceneName)
+        {
+            SceneManager.LoadScene(sceneName);
+        }
 
-    public static void SetString(string paramKey, string paramValue)
-    {
-        _parameters.Add(paramKey, paramValue);
-    }
+        public static string GetString(string paramKey)
+        {
+            return _parameters[paramKey];
+        }
 
-    public static int GetInt(string paramKey)
-    {
-        return int.Parse(_parameters[paramKey]);
-    }
+        public static void SetString(string paramKey, string paramValue)
+        {
+            _parameters[paramKey] = paramValue;
+        }
 
-    public static void SetInt(string paramKey, int paramValue)
-    {
-        _parameters.Add(paramKey, paramValue.ToString());
-    }
+        public static int GetInt(string paramKey)
+        {
+            return int.Parse(_parameters[paramKey]);
+        }
 
-    public static bool GetBool(string paramKey)
-    {
-        return bool.Parse(_parameters[paramKey]);
-    }
+        public static void SetInt(string paramKey, int paramValue)
+        {
+            _parameters[paramKey] = paramValue.ToString();
+        }
 
-    public static void SetBool(string paramKey, bool paramValue)
-    {
-        _parameters.Add(paramKey, (paramValue ? 1 : 0).ToString());
+        public static bool GetBool(string paramKey)
+        {
+            return bool.Parse(_parameters[paramKey]);
+        }
+
+        public static void SetBool(string paramKey, bool paramValue)
+        {
+            _parameters[paramKey] = (paramValue ? 1 : 0).ToString();
+        }
     }
 }
