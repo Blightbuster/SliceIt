@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Other;
+using UnityEngine;
 
 namespace Menu
 {

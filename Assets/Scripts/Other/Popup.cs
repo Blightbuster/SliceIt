@@ -6,8 +6,8 @@ namespace Game
 {
     public class Popup : MonoBehaviour
     {
-        public string Text = "";
-        public int DisplayTime = 3;
+        public string Text;
+        public int DisplayTime;
 
         private Animator _animator;
 
