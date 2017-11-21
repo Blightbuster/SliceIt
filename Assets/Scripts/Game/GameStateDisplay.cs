@@ -8,7 +8,7 @@ namespace Game
         // Update is called once per frame
         void Update ()
         {
-            GetComponent<Text>().text = Manager.GameManager.State.ToString();
+            GetComponent<Text>().text = GameManager.Instance.State.ToString();
         }
     }
 }

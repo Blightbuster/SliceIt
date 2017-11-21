@@ -18,8 +18,8 @@ namespace Game
 
         private void OnEnable()
         {
-            DisplayScores(_positionPlayerScore, Manager.GameManager.Player, Manager.GameManager.Opponent);
-            DisplayScores(_positionOpponentScore, Manager.GameManager.Opponent, Manager.GameManager.Player);
+            DisplayScores(_positionPlayerScore, GameManager.Instance.Player, GameManager.Instance.Opponent);
+            DisplayScores(_positionOpponentScore, GameManager.Instance.Opponent, GameManager.Instance.Player);
         }
 
         private void DisplayScores(Vector3 pos, GameManager.Score playerScore, GameManager.Score opponentScore)

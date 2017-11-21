@@ -11,6 +11,7 @@ namespace Game
         public GameObject PlayingField;
         public List<GameObject> SlicingObjects = new List<GameObject>();
         public GameState State;
+        public static GameManager Instance = null;
 
         public Score Player = new Score();
         public Score Opponent = new Score();

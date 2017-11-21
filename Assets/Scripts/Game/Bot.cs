@@ -36,8 +36,8 @@ namespace Game
 
         public float GetNextMove()
         {
-            _botScore = Manager.GameManager.Opponent.Points;
-            _playerScore = Manager.GameManager.Player.Points;
+            _botScore = GameManager.Instance.Opponent.Points;
+            _playerScore = GameManager.Instance.Player.Points;
             float nextMoveMass = 0;
             int gameLengthPrediction = GameLengthPrediction();
             float averageMassPerRoundStatic = (_averageMassPerRound + (TotalMass / gameLengthPrediction)) / 2;              // Get average Mass for rounds only account TotalMass

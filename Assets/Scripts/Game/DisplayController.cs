@@ -32,7 +32,7 @@ namespace Game
 
         private void Update()
         {
-            TargetNumber = Manager.GameManager.GetMassOnScale();
+            TargetNumber = GameManager.Instance.GetMassOnScale();
         }
 
         private void FixedUpdate()

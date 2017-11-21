@@ -21,7 +21,7 @@ namespace Game
             float xPos = _parantGameObject.transform.position.x;
             float yPos = _parantGameObject.transform.position.y;
 
-            for (int i = 0; i < Manager.GameManager.PointsForWin; i++)
+            for (int i = 0; i < GameManager.Instance.PointsForWin; i++)
             {
                 Vector3 pos = new Vector3(xPos + i * _xSpacing, yPos, 0);
                 PointList.Add(Instantiate(_pointPrefab, pos, Quaternion.identity, _parantGameObject.transform));
@@ -33,14 +33,14 @@ namespace Game
         {
             if (_playerScore)
             {
-                for (int i = 0; i < Manager.GameManager.Player.Points; i++)
+                for (int i = 0; i < GameManager.Instance.Player.Points; i++)
                 {
                     PointList[i].GetComponent<Image>().color = _enabledColor;
                 }
             }
             else
             {
-                for (int i = 0; i < Manager.GameManager.Opponent.Points; i++)
+                for (int i = 0; i < GameManager.Instance.Opponent.Points; i++)
                 {
                     PointList[i].GetComponent<Image>().color = _enabledColor;
                 }
