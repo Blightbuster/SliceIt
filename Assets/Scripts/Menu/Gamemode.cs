@@ -1,17 +1,25 @@
-﻿using UnityEngine;
+﻿using Game;
+using Other;
+using UnityEngine;
 
 namespace Menu
 {
     public class Gamemode : MonoBehaviour
     {
-        public void SinglePlayer()
+        public void SinglePlayerButton()
         {
-            Scenes.SetInt("Gamemode", 0);   // 0 = Bot; 1 = Bluetooth; 2 = Wifi;
+            Scenes.SetString("GameMode", "Bot");
+            Scenes.SetString("OpponentName", "Bot");
             Scenes.Load("Game");
         }
 
-        public void Multiplayer()
+        public void MultiplayerButton()
         {
+            if (!MultiplayerManager.Instance.LoggedIn)
+            {
+                Other.Tools.CreatePopup(Other.Tools.Messages.LoginRequired);
+                return;
+            }
             Scenes.Load("Multiplayer");
         }
 
