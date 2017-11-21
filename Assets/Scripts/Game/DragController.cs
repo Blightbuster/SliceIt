@@ -29,7 +29,7 @@ namespace Game
             if (Input.GetMouseButton(0) && _isDragging)
             {
                 Vector3 objectPosition;
-                if (_desiredObject.transform.GetComponent<MeshRenderer>() != null) // Does the gameobject contain a "MeshRenderer" ?
+                if (_desiredObject.transform.GetComponent<MeshRenderer>() != null)                                      // Does the gameobject contain a "MeshRenderer" ?
                     objectPosition = _desiredObject.transform.gameObject.GetComponent<MeshRenderer>().bounds.center;    // Object position is NOT at center -> recalculate center of object
                 else
                     objectPosition = _desiredObject.transform.gameObject.GetComponent<SpriteRenderer>().bounds.center;  // Object position is NOT at center -> recalculate center of object
