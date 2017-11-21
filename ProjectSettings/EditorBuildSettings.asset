@@ -5,8 +5,8 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
-    path: Assets/Minimal/MainScene.unity
+  - enabled: 0
+    path: 
     guid: 38664161efaca4b22862070c6f7fc16e
   - enabled: 1
     path: Assets/Scenes/Menu/Main.unity
@@ -35,3 +35,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menu/TopPlayers.unity
     guid: 3a482823cafb8774a9d14ce0b8d4740c
+  - enabled: 1
+    path: Assets/Scenes/Menu/PrivateMatch.unity
+    guid: 5eaefde8b4fad6d4bb895550c48dd3e5
