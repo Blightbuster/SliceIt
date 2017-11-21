@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Other;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game
 {
@@ -13,13 +15,13 @@ namespace Game
         public GameState State;
         public static GameManager Instance = null;
 
-        public Score Player = new Score();
-        public Score Opponent = new Score();
         public int PointsForWin;
         public float TotalMassLeft = 1000;
+        public GameType GameMode;
+        public Score Player = new Score();
+        public Score Opponent = new Score();
 
-        private static GameType _gameMode = GameType.Bot;
-        private static float _lastTotalMass;
+        private static float _lastPlacedMass;
         private readonly Bot _botOpponent = new Bot();
 
         public enum GameState
@@ -53,8 +55,10 @@ namespace Game
 
         private void Start()
         {
-            //StartGame(5, (GameType)Scenes.GetInt("Gamemode"));
-            StartGame(5, 0);    // Debug only
+            if (Instance == null) Instance = this;
+            GameMode = (GameType)Enum.Parse(typeof(GameType), Scenes.GetString("GameMode"));
+            StartGame(5, GameMode);
+            GameObject.Find("OpponentName").GetComponent<Text>().text = "You vs. " + Scenes.GetString("OpponentName");
         }
 
         public void StartGame(int iPointsForWin, GameType iGameMode)
@@ -62,7 +66,7 @@ namespace Game
             Canvas = GameObject.Find("Canvas");
             PlayingField = GameObject.Find("PlayingField");
             PointsForWin = iPointsForWin;
-            _gameMode = iGameMode;
+            GameMode = iGameMode;
             State = GameState.StartGame;
         }
 
@@ -105,10 +109,14 @@ namespace Game
                     if (TotalMassLeft <= 0) State = GameState.LossGame;
                     break;
                 case GameState.FinishedMove:
-                    if (GetMassOnScale() == 0)
+                    if (GetMassOnScale() <= 0)
                     {
                         State = GameState.Playing;
                         break;
+                    }
+                    if (GameMode == GameType.Online)
+                    {
+                        MultiplayerManager.Instance.FinishMove(_lastPlacedMass);
                     }
                     State = GameState.WaitForOpponent;
                     break;
@@ -119,12 +127,12 @@ namespace Game
                     State = GameState.LossGame;
                     break;
                 case GameState.WaitForOpponent:
-                    if (_gameMode == GameType.Bot)
+                    if (GameMode == GameType.Bot)
                     {
                         float botMove = _botOpponent.GetNextMove();
-                        State = _lastTotalMass > botMove ? GameState.WonRound : GameState.LossRound;
-                        TotalMassLeft -= _lastTotalMass;
-                        Player.Moves.Add(_lastTotalMass);
+                        State = _lastPlacedMass > botMove ? GameState.WonRound : GameState.LossRound;
+                        TotalMassLeft -= _lastPlacedMass;
+                        Player.Moves.Add(_lastPlacedMass);
                         Opponent.Moves.Add(botMove);
                     }
                     break;
@@ -141,20 +149,17 @@ namespace Game
 
         public void FinishMove()
         {
-            if (_gameMode == GameType.Bot)
+            foreach (GameObject slice in Controller.TagController.TagWeigh)
             {
-                foreach (GameObject slice in Controller.TagController.TagWeigh)
-                {
-                    slice.AddComponent<FadeAndDestroy>();
-                }
+                slice.AddComponent<FadeAndDestroy>();
             }
-            _lastTotalMass = GetMassOnScale();
+            _lastPlacedMass = GetMassOnScale();
             State = GameState.FinishedMove;
         }
 
-        public void SetState(string tmpState)
+        public void SetState(string iState)
         {
-            State = (GameState) System.Enum.Parse(typeof(GameState), tmpState);
+            State = (GameState)System.Enum.Parse(typeof(GameState), iState);
         }
 
         public float GetMassOnScale()
@@ -166,6 +171,22 @@ namespace Game
                 totalWeigh += go.GetComponent<Rigidbody2D>().mass;
             }
             return totalWeigh;
+        }
+
+        public bool OpponentMove(float mass)
+        {
+            if (State == GameState.WaitForOpponent)
+            {
+                State = _lastPlacedMass > mass ? GameState.WonRound : GameState.LossRound;
+                TotalMassLeft -= _lastPlacedMass;
+                Player.Moves.Add(_lastPlacedMass);
+                Opponent.Moves.Add(mass);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void UpdateScoreDisplay()
