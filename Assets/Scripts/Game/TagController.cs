@@ -25,7 +25,7 @@ namespace Game
         {
             TagWeigh.Clear();
 
-            foreach (SpriteSlicer2DSliceInfo sliceInfo in GetComponent<ObjectSlicer>().SlicedSpriteInfo)
+            foreach (SpriteSlicer2DSliceInfo sliceInfo in ObjectSlicer.Instance.SlicedSpriteInfo)
             {
                 sliceInfo.ChildObjects.RemoveAll(item => item == null);
                 foreach (GameObject go in sliceInfo.ChildObjects)

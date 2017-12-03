@@ -5,6 +5,8 @@ namespace Game
 {
     public class ObjectSlicer : MonoBehaviour
     {
+        public static ObjectSlicer Instance;
+
         public List<SpriteSlicer2DSliceInfo> SlicedSpriteInfo = new List<SpriteSlicer2DSliceInfo>();
         private LineRenderer _lineRenderer;
 
@@ -15,6 +17,7 @@ namespace Game
         // Start is called at initialization
         private void Start()
         {
+            if (Instance == null) { Instance = this; }
             _lineRenderer = GetComponent<LineRenderer>();
         }
 

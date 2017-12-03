@@ -90,6 +90,9 @@ namespace Game
                     State = GameState.ShowRoundResults;
                     break;
                 case GameState.LossGame:
+                    GameObject.Find("Border").SetActive(false);
+                    GameObject.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.73f);
+                    ExplodeSlices();
                     State = GameState.ShowRoundResults;
                     break;
                 case GameState.WonRound:
@@ -186,6 +189,19 @@ namespace Game
             else
             {
                 return false;
+            }
+        }
+
+        private void ExplodeSlices()
+        {
+            foreach (SpriteSlicer2DSliceInfo sliceInfo in ObjectSlicer.Instance.SlicedSpriteInfo)
+            {
+                sliceInfo.ChildObjects.RemoveAll(item => item == null);
+                foreach (GameObject slice in sliceInfo.ChildObjects)
+                {
+                    slice.GetComponent<Rigidbody2D>().mass = 0; // Set mass of each slicing object to 0 in order to apply less force
+                    SpriteSlicer2D.ExplodeSprite(slice, 10, 1); // Explode the slices because its fun :D
+                }
             }
         }
 
