@@ -20,12 +20,12 @@ namespace Menu
                 Other.Tools.CreatePopup(Other.Tools.Messages.LoginRequired);
                 return;
             }
-            Scenes.Load("Multiplayer");
+            MenuManager.Instance.Load("Multiplayer");
         }
 
         public void Back()
         {
-            Scenes.Load("Main");
+            MenuManager.Instance.Load("Main");
         }
     }
 }

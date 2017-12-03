@@ -7,7 +7,7 @@ namespace Menu
     {
         public void Back()
         {
-            Scenes.Load("Main");
+            MenuManager.Instance.Load("Main");
         }
     }
 }

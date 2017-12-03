@@ -12,7 +12,7 @@ namespace Menu
 
         public void Back()
         {
-            Scenes.Load("Multiplayer");
+            MenuManager.Instance.Load("Multiplayer");
         }
     }
 }

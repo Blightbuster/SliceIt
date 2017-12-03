@@ -17,22 +17,22 @@ namespace Menu
 
         public void PlayButton()
         {
-            Scenes.Load("Gamemode");
+            MenuManager.Instance.Load("Gamemode");
         }
 
         public void StatisticsButton()
         {
-            Scenes.Load("Statistics");
+            MenuManager.Instance.Load("Statistics");
         }
 
         public void CustomisationButton()
         {
-            Scenes.Load("Customisation");
+            MenuManager.Instance.Load("Customisation");
         }
 
         public void SettingsButton()
         {
-            Scenes.Load("Settings");
+            MenuManager.Instance.Load("Settings");
         }
 
         public void LoginButton()

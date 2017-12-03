@@ -13,12 +13,12 @@ namespace Menu
 
         public void PrivateMatchButton()
         {
-            Scenes.Load("PrivateMatch");
+            MenuManager.Instance.Load("PrivateMatch");
         }
 
         public void Back()
         {
-            Scenes.Load("Gamemode");
+            MenuManager.Instance.Load("Gamemode");
         }
     }
 }

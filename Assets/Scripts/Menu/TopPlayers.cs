@@ -7,7 +7,7 @@ namespace Menu
     {
         public void Back()
         {
-            Scenes.Load("Statistics");
+            MenuManager.Instance.Load("Statistics");
         }
     }
 }

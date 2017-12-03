@@ -84,7 +84,7 @@ namespace Game
                     State = GameState.Playing;
                     break;
                 case GameState.EndGame:
-                    Scenes.Load("Main");
+                    Scenes.Load("Menu");
                     break;
                 case GameState.WonGame:
                     State = GameState.ShowRoundResults;
@@ -106,10 +106,10 @@ namespace Game
                     break;
                 case GameState.NextRound:
                     State = GameState.Playing;
-                    if (TotalMassLeft <= 0) State = GameState.LossGame;
+                    if (TotalMassLeft <= 0) State = GameState.NoMassLeft;
                     break;
                 case GameState.FinishedMove:
-                    if (GetMassOnScale() <= 0)
+                    if (GetMassOnScale() <= 1)
                     {
                         State = GameState.Playing;
                         break;
