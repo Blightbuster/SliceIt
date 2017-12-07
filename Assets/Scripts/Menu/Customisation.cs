@@ -9,5 +9,11 @@ namespace Menu
         {
             MenuManager.Instance.Load("Main");
         }
+
+        public void SetSlicingObject(string type)
+        {
+            Scenes.SetString("SlicingObject", type);
+            MenuManager.Instance.Load("Main");
+        }
     }
 }

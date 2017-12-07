@@ -12,6 +12,7 @@ namespace Game
         public GameObject Canvas;
         public GameObject PlayingField;
         public List<GameObject> SlicingObjects = new List<GameObject>();
+        public string SlicingObjectName;
         public GameState State;
         public static GameManager Instance = null;
 
@@ -56,6 +57,7 @@ namespace Game
         private void Start()
         {
             if (Instance == null) Instance = this;
+            SlicingObjectName = Scenes.GetString("SlicingObject");
             GameMode = (GameType)Enum.Parse(typeof(GameType), Scenes.GetString("GameMode"));
             StartGame(5, GameMode);
             GameObject.Find("OpponentName").GetComponent<Text>().text = "You vs. " + Scenes.GetString("OpponentName");
@@ -78,7 +80,7 @@ namespace Game
                 case GameState.Playing:
                     break;
                 case GameState.StartGame:
-                    InstantiateSlicingObjects();
+                    InstantiateSlicingObject();
                     Controller.PlayerUIScoreController.Setup();
                     Controller.OpponentUIScoreController.Setup();
                     State = GameState.Playing;
@@ -211,10 +213,15 @@ namespace Game
             Controller.OpponentUIScoreController.UpdatePoints();
         }
 
-        private void InstantiateSlicingObjects()
+        private void InstantiateSlicingObject()
         {
-            List<GameObject> tmpSlicingObjects = SlicingObjects.Select(Instantiate).ToList();
-            SlicingObjects = tmpSlicingObjects;
+            foreach (GameObject tmpSlicingObject in SlicingObjects)
+            {
+                if (tmpSlicingObject.name == SlicingObjectName)
+                {
+                    Instantiate(tmpSlicingObject);
+                }
+            }
         }
     }
 }
