@@ -7,12 +7,9 @@ namespace Menu
 {
     public class Main : MonoBehaviour
     {
-        public Sprite LoginSprite;
-        public Sprite LogoutSprite;
-
         private void Start()
         {
-            GameObject.Find("Login").GetComponent<Image>().sprite = MultiplayerManager.Instance.LoggedIn ? LogoutSprite : LoginSprite;
+            if (!MultiplayerManager.Instance.LoggedIn) MultiplayerManager.Instance.Login();
             Scenes.SetString("SlicingObject", "Banana");
         }
 
@@ -34,24 +31,6 @@ namespace Menu
         public void SettingsButton()
         {
             MenuManager.Instance.Load("Settings");
-        }
-
-        public void LoginButton()
-        {
-            if (MultiplayerManager.Instance.LoggedIn)
-            {
-                if (MultiplayerManager.Instance.Logout())
-                {
-                    GameObject.Find("Login").GetComponent<Image>().sprite = LoginSprite;
-                }
-            }
-            else
-            {
-                if (MultiplayerManager.Instance.Login())
-                {
-                    GameObject.Find("Login").GetComponent<Image>().sprite = LogoutSprite;
-                }
-            }
         }
     }
 }
