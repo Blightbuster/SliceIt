@@ -90,12 +90,14 @@ namespace Game
                     break;
                 case GameState.WonGame:
                     State = GameState.ShowRoundResults;
+                    Other.Tools.CreatePopup("You WON the Game!");
                     break;
                 case GameState.LossGame:
                     GameObject.Find("Border").SetActive(false);
                     GameObject.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.73f);
                     ExplodeSlices();
                     State = GameState.ShowRoundResults;
+                    Other.Tools.CreatePopup("You LOST the Game!");
                     break;
                 case GameState.WonRound:
                     Player.Points++;
@@ -111,10 +113,10 @@ namespace Game
                     break;
                 case GameState.NextRound:
                     State = GameState.Playing;
-                    if (TotalMassLeft <= 0) State = GameState.NoMassLeft;
+                    if (TotalMassLeft <= 1) State = GameState.NoMassLeft;
                     break;
                 case GameState.FinishedMove:
-                    if (GetMassOnScale() <= 1)
+                    if (GetMassOnScale() <= 0)
                     {
                         State = GameState.Playing;
                         break;
@@ -129,6 +131,7 @@ namespace Game
                     State = GameState.FinishedMove;
                     break;
                 case GameState.NoMassLeft:
+                    Other.Tools.CreatePopup("Out of mass");
                     State = GameState.LossGame;
                     break;
                 case GameState.WaitForOpponent:
