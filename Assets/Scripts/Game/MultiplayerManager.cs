@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using Other;
@@ -19,6 +20,7 @@ namespace Game
 
         private TcpClient _client;
         private NetworkStream _stream;
+        private StreamWriter _writer;
 
         private static bool _connectedToServer = false;
 
@@ -48,6 +50,8 @@ namespace Game
             {
                 SecurePlayerPrefs.SetInt("IsRegistered", 0);
             }
+
+            Register("PEA17", "love");
         }
 
         private void Update()
@@ -73,6 +77,7 @@ namespace Game
             {
                 _client = new TcpClient(_server, _port);
                 _stream = _client.GetStream();
+                _writer = new StreamWriter(_client.GetStream());
                 _connectedToServer = true;
                 Other.Tools.CreatePopup(Other.Tools.Messages.ConnectionSuccess);
                 return true;
@@ -349,26 +354,24 @@ namespace Game
         {
             if (checkTokenExpire && CurrentTimestamp() > SecurePlayerPrefs.GetInt("ClientTokenExpire")) Login();
 
-            if (!_connectedToServer) if (!ConnectToServer()) return null;                   // Are we already connected to the server?
+            if (!_connectedToServer) if (!ConnectToServer()) return null;           // Are we already connected to the server?
 
             // Send request
-            var data = System.Text.Encoding.ASCII.GetBytes(JsonUtility.ToJson(request));    // Convert object -> json -> bytes
-            _stream.Write(data, 0, data.Length);                                            // Write data to stream
-            _stream.Flush();                                                                // Flush and wait for respons
+            var sendingData = JsonUtility.ToJson(request);                          // Convert object -> json -> bytes
+            _writer.WriteLine(sendingData);                                         // Write data to stream
+            _writer.Flush();                                                        // Flush and wait for respons
 
             // Receive response
-            byte[] buffer;
+            byte[] data = System.Text.Encoding.ASCII.GetBytes(sendingData);
             if (callback == CallbackType.None)
             {
-                buffer = new byte[1024];                                                    // Create buffer to store response
-                var bytes = _stream.Read(data, 0, data.Length);                             // Read response bytes
-                return System.Text.Encoding.ASCII.GetString(data, 0, bytes);                // Convert bytes -> json
+                var bytes = _stream.Read(data, 0, data.Length);                     // Read response bytes
+                return System.Text.Encoding.ASCII.GetString(data, 0, bytes);        // Convert bytes -> json
             }
             else
             {
                 _expectedCallback = callback;
-                buffer = new byte[1024];                                                    // Create buffer to store response
-                _stream.BeginRead(data, 0, data.Length, ResponseCallback, data);            // Read response bytes
+                _stream.BeginRead(data, 0, data.Length, ResponseCallback, data);    // Read response bytes
                 return null;
             }
         }
