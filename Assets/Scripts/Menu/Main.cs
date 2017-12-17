@@ -13,6 +13,7 @@ namespace Menu
         private void Start()
         {
             GameObject.Find("Login").GetComponent<Image>().sprite = MultiplayerManager.Instance.LoggedIn ? LogoutSprite : LoginSprite;
+            Scenes.SetString("SlicingObject", "Banana");
         }
 
         public void PlayButton()
