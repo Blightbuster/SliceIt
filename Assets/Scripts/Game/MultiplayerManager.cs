@@ -14,7 +14,7 @@ namespace Game
         public static MultiplayerManager Instance = null;
 
         [SerializeField]
-        private string _server = "localhost";
+        private string _server = "18.217.114.209";
         [SerializeField]
         private int _port = 1531;  // Gründungsjahr des Katharineums zu Lübeck
 
@@ -50,8 +50,6 @@ namespace Game
             {
                 SecurePlayerPrefs.SetInt("IsRegistered", 0);
             }
-
-            Register("PEA17", "love");
         }
 
         private void Update()
