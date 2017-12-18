@@ -243,7 +243,6 @@ namespace Game
             }
 
             // Handle request
-            Scenes.Load("Multiplayer");
             return true;
         }
 
@@ -313,7 +312,7 @@ namespace Game
             MpResponse.AvaibleGames avaibleGamesResponse = JsonUtility.FromJson<MpResponse.AvaibleGames>(rawResponse);
             return avaibleGamesResponse.GameNames;
         }
-        
+
         public void FinishMove(float mass)
         {
             // Configure request
