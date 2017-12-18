@@ -13,10 +13,8 @@ namespace Game
         public bool LoggedIn = false;
         public static MultiplayerManager Instance = null;
 
-        [SerializeField]
-        private string _server = "18.217.114.209";
-        [SerializeField]
-        private int _port = 1531;  // Gründungsjahr des Katharineums zu Lübeck
+        private const string Server = "18.217.114.209";
+        private const int Port = 1531; // Gründungsjahr des Katharineums zu Lübeck
 
         private TcpClient _client;
         private NetworkStream _stream;
@@ -73,7 +71,7 @@ namespace Game
         {
             try
             {
-                _client = new TcpClient(_server, _port);
+                _client = new TcpClient(Server, Port);
                 _stream = _client.GetStream();
                 _writer = new StreamWriter(_client.GetStream());
                 _connectedToServer = true;
