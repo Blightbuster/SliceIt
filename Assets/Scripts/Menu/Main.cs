@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using System;
+using Game;
 using Other;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +10,18 @@ namespace Menu
     {
         private void Start()
         {
-            if (!MultiplayerManager.Instance.LoggedIn) MultiplayerManager.Instance.Login();
+            try
+            {
+                if (SecurePlayerPrefs.HasKey("IsRegistered") && SecurePlayerPrefs.GetInt("IsRegistered") == 1)
+                {
+                    if (!MultiplayerManager.Instance.LoggedIn) MultiplayerManager.Instance.Login();
+                }
+                else
+                {
+                    SecurePlayerPrefs.SetInt("IsRegistered", 0);
+                }
+            }
+            catch (Exception) { }
             Scenes.SetString("SlicingObject", "Banana");
         }
 
