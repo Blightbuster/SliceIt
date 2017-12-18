@@ -70,7 +70,12 @@ namespace Game
             elevatedStartPos.Normalize();
             _startPos += elevatedStartPos;
 
+            int sliceCount = SlicedSpriteInfo.Count;
+
             SpriteSlicer2D.SliceAllSprites(_startPos, _endPos, false, ref SlicedSpriteInfo, "Slice");
+
+            // Play slicing sound
+            if (sliceCount != SlicedSpriteInfo.Count) SoundManager.Instance.PlayRandomSound();
         }
     }
 }
