@@ -174,6 +174,7 @@ namespace Game
             SecurePlayerPrefs.SetString("ClientToken", response.ClientToken);           // Set new token
             SecurePlayerPrefs.SetInt("ClientTokenExpire", CurrentTimestamp() + 3600);   // We add 3600 seconds because the token will be valid for one hour
             LoggedIn = true;    // Set status
+            SecurePlayerPrefs.SetInt("IsRegistered", 1);
 
             if (showPopups) Other.Tools.CreatePopup(Other.Tools.Messages.LoggedIn);
             return true;
