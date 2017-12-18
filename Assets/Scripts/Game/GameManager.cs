@@ -31,9 +31,9 @@ namespace Game
             StartGame,
             EndGame,
             WonGame,
-            LossGame,
+            LostGame,
             WonRound,
-            LossRound,
+            LostRound,
             NextRound,
             FinishedMove,
             TimeOver,
@@ -92,7 +92,7 @@ namespace Game
                     State = GameState.ShowRoundResults;
                     Other.Tools.CreatePopup("You WON the Game!");
                     break;
-                case GameState.LossGame:
+                case GameState.LostGame:
                     GameObject.Find("Border").SetActive(false);
                     GameObject.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.73f);
                     ExplodeSlices();
@@ -105,11 +105,11 @@ namespace Game
                     State = GameState.NextRound;
                     if (Player.Points >= PointsForWin) State = GameState.WonGame;
                     break;
-                case GameState.LossRound:
+                case GameState.LostRound:
                     Opponent.Points++;
                     UpdateScoreDisplay();
                     State = GameState.NextRound;
-                    if (Opponent.Points >= PointsForWin) State = GameState.LossGame;
+                    if (Opponent.Points >= PointsForWin) State = GameState.LostGame;
                     break;
                 case GameState.NextRound:
                     State = GameState.Playing;
@@ -132,13 +132,13 @@ namespace Game
                     break;
                 case GameState.NoMassLeft:
                     Other.Tools.CreatePopup("Out of mass");
-                    State = GameState.LossGame;
+                    State = GameState.LostGame;
                     break;
                 case GameState.WaitForOpponent:
                     if (GameMode == GameType.Bot)
                     {
                         float botMove = _botOpponent.GetNextMove();
-                        State = _lastPlacedMass > botMove ? GameState.WonRound : GameState.LossRound;
+                        State = _lastPlacedMass > botMove ? GameState.WonRound : GameState.LostRound;
                         TotalMassLeft -= _lastPlacedMass;
                         Player.Moves.Add(_lastPlacedMass);
                         Opponent.Moves.Add(botMove);
@@ -185,7 +185,7 @@ namespace Game
         {
             if (State == GameState.WaitForOpponent)
             {
-                State = _lastPlacedMass > mass ? GameState.WonRound : GameState.LossRound;
+                State = _lastPlacedMass > mass ? GameState.WonRound : GameState.LostRound;
                 TotalMassLeft -= _lastPlacedMass;
                 Player.Moves.Add(_lastPlacedMass);
                 Opponent.Moves.Add(mass);
