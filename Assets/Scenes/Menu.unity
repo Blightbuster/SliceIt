@@ -1529,8 +1529,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 847199787}
-        m_MethodName: Back
+      - m_Target: {fileID: 847199794}
+        m_MethodName: BackButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2170,8 +2170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LoggedIn: 0
-  _server: localhost
-  _port: 1531
 --- !u!4 &749144963
 Transform:
   m_ObjectHideFlags: 0
