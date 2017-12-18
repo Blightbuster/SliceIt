@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Game;
 using Other;
 using UnityEngine;
@@ -44,6 +45,8 @@ namespace Menu
 
         public void StatisticsButton()
         {
+            Other.Tools.CreatePopup(Other.Tools.Messages.ComingSoon);
+            return;
             MenuManager.Instance.Load("Statistics");
         }
 
