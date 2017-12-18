@@ -38,7 +38,8 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos: []
-  m_SplashScreenBackgroundLandscape: {fileID: 0}
+  m_SplashScreenBackgroundLandscape: {fileID: 1, guid: 00000000000000000000000000000000,
+    type: 0}
   m_SplashScreenBackgroundPortrait: {fileID: 0}
   m_VirtualRealitySplashScreen: {fileID: 0}
   m_HolographicTrackingLossScreen: {fileID: 0}
@@ -121,7 +122,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 1.0.2
+  bundleVersion: 1.1.0
   preloadedAssets: []
   metroInputSource: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -143,7 +144,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.BlightStudios.SliceIt
   buildNumber: {}
-  AndroidBundleVersionCode: 5
+  AndroidBundleVersionCode: 6
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
