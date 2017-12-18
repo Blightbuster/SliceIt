@@ -8,6 +8,8 @@ namespace Menu
 {
     public class Main : MonoBehaviour
     {
+        public List<GameObject> SlicingObjects = new List<GameObject>();
+
         private void Start()
         {
             try
@@ -18,11 +20,21 @@ namespace Menu
                 }
                 else
                 {
+                    SecurePlayerPrefs.SetString("SlicingObject", "Sausage");
                     SecurePlayerPrefs.SetInt("IsRegistered", 0);
                 }
             }
             catch (Exception) { }
-            Scenes.SetString("SlicingObject", "Banana");
+            UpdateCustomizationButton();
+        }
+
+        public void UpdateCustomizationButton()
+        {
+            string selectedSlicingObject = SecurePlayerPrefs.GetString("SlicingObject");
+            foreach (GameObject so in SlicingObjects)
+            {
+                so.SetActive(so.name == selectedSlicingObject);
+            }
         }
 
         public void PlayButton()

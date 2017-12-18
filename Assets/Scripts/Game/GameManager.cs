@@ -57,7 +57,7 @@ namespace Game
         private void Start()
         {
             if (Instance == null) Instance = this;
-            SlicingObjectName = Scenes.GetString("SlicingObject");
+            SlicingObjectName = SecurePlayerPrefs.GetString("SlicingObject");
             GameMode = (GameType)Enum.Parse(typeof(GameType), Scenes.GetString("GameMode"));
             StartGame(5, GameMode);
             GameObject.Find("OpponentName").GetComponent<Text>().text = "You vs. " + Scenes.GetString("OpponentName");

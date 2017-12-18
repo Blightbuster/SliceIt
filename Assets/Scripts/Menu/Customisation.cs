@@ -1,4 +1,5 @@
-﻿using Other;
+﻿using Game;
+using Other;
 using UnityEngine;
 
 namespace Menu
@@ -12,8 +13,9 @@ namespace Menu
 
         public void SetSlicingObject(string type)
         {
-            Scenes.SetString("SlicingObject", type);
+            SecurePlayerPrefs.SetString("SlicingObject", type);
             MenuManager.Instance.Load("Main");
+            MenuManager.Instance.GetComponent<Main>().UpdateCustomizationButton();
         }
     }
 }
