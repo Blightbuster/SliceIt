@@ -90,14 +90,14 @@ namespace Game
                     break;
                 case GameState.WonGame:
                     State = GameState.ShowRoundResults;
-                    Other.Tools.CreatePopup("You WON the Game!");
+                    Other.Tools.CreatePopup(Other.Tools.Messages.WonGame);
                     break;
                 case GameState.LostGame:
                     GameObject.Find("Border").SetActive(false);
                     GameObject.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.73f);
                     ExplodeSlices();
                     State = GameState.ShowRoundResults;
-                    Other.Tools.CreatePopup("You LOST the Game!");
+                    Other.Tools.CreatePopup(Other.Tools.Messages.LostGame);
                     break;
                 case GameState.WonRound:
                     Player.Points++;
