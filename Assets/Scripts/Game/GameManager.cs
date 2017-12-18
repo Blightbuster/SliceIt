@@ -135,6 +135,8 @@ namespace Game
                     State = GameState.LostGame;
                     break;
                 case GameState.WaitForOpponent:
+                    Canvas.transform.Find("FinishMove").gameObject.SetActive(false);
+                    Canvas.transform.Find("WaitingForOpponent").gameObject.SetActive(true);
                     if (GameMode == GameType.Bot)
                     {
                         float botMove = _botOpponent.GetNextMove();
@@ -142,6 +144,8 @@ namespace Game
                         TotalMassLeft -= _lastPlacedMass;
                         Player.Moves.Add(_lastPlacedMass);
                         Opponent.Moves.Add(botMove);
+                        Canvas.transform.Find("FinishMove").gameObject.SetActive(true);
+                        Canvas.transform.Find("WaitingForOpponent").gameObject.SetActive(false);
                     }
                     break;
                 case GameState.ShowRoundResults:
@@ -189,6 +193,8 @@ namespace Game
                 TotalMassLeft -= _lastPlacedMass;
                 Player.Moves.Add(_lastPlacedMass);
                 Opponent.Moves.Add(mass);
+                Canvas.transform.Find("FinishMove").gameObject.SetActive(true);
+                Canvas.transform.Find("WaitingForOpponent").gameObject.SetActive(false);
                 return true;
             }
             else
