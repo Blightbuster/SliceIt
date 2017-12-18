@@ -114,6 +114,8 @@ namespace Game
 
         public bool Register(string clientName, string clientPassword)
         {
+            if (!IsUsernameAllowed(clientName)) return false;
+
             // Set new Login Credentials
             SecurePlayerPrefs.SetString("ClientName", clientName);
             SecurePlayerPrefs.SetString("ClientPassword", clientPassword);
@@ -147,11 +149,7 @@ namespace Game
 
         public bool Login(string clientName, string clientPassword, bool showPopups = true)
         {
-            if (!IsUsernameAllowed(clientName))
-            {
-                Other.Tools.CreatePopup(Other.Tools.Messages.UsernameNotAllowed + "\n" + Other.Tools.Messages.UsernameInfo);    // Show even when Popups are disabled
-                return false;
-            }
+            if (!IsUsernameAllowed(clientName)) return false;
 
             if (clientName != SecurePlayerPrefs.GetString("ClientName") || clientPassword != SecurePlayerPrefs.GetString("ClientPassword"))
             {
@@ -414,7 +412,14 @@ namespace Game
 
         private static bool IsUsernameAllowed(string username)
         {
-            if (username.All(c => char.IsLetterOrDigit(c) || c.Equals('_'))) return true;   // LINQ is love, LINQ is live
+            string message = null;
+            if (!username.All(char.IsLetterOrDigit)) message = Other.Tools.Messages.UsernameInfoCharacter;
+            if (username.Length < 4) message = Other.Tools.Messages.UsernameInfoToShort;
+            if (username.Length > 16) message = Other.Tools.Messages.UsernameInfoToLong;
+
+            if (message == null) return true;   // Username is allowed
+
+            Other.Tools.CreatePopup(Other.Tools.Messages.UsernameNotAllowed + "\n" + message);
             return false;
         }
     }
