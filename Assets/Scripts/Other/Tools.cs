@@ -36,6 +36,7 @@ namespace Other
             public static readonly string LoginRequired = "Login first before playing online";
             public static readonly string WonGame = "You WON the game";
             public static readonly string LostGame = "You LOST the game";
+            public static readonly string ComingSoon = "Coming soon";
         }
 
 

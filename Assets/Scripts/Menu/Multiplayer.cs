@@ -24,6 +24,8 @@ namespace Menu
 
         public void PrivateMatchButton()
         {
+            Other.Tools.CreatePopup(Other.Tools.Messages.ComingSoon);
+            return;
             CancelQuickMatchButton();
             MenuManager.Instance.Load("PrivateMatch");
         }
