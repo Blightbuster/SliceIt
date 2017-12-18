@@ -89,6 +89,9 @@ namespace Game
                     Scenes.Load("Menu");
                     break;
                 case GameState.WonGame:
+                    GameObject.Find("Border").SetActive(false);
+                    GameObject.Find("Background").GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0.73f);
+                    ExplodeSlices();
                     State = GameState.ShowRoundResults;
                     Other.Tools.CreatePopup(Other.Tools.Messages.WonGame);
                     break;
