@@ -30,8 +30,12 @@ namespace Other
             public static readonly string InvalidGamePassword = "Wrong password";
             public static readonly string NotInGame = "Wrong password";
             public static readonly string UsernameNotAllowed = "Username not allowed";
-            public static readonly string UsernameInfo = "Use letters, numbers and underscores";
+            public static readonly string UsernameInfoCharacter = "Use letters and numbers only";
+            public static readonly string UsernameInfoToShort = "Use at least 4 characters";
+            public static readonly string UsernameInfoToLong = "Use at most 16 characters";
             public static readonly string LoginRequired = "Login first before playing online";
+            public static readonly string WonGame = "You WON the game";
+            public static readonly string LostGame = "You LOST the game";
         }
 
 
